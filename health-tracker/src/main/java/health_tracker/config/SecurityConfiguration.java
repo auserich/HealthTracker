@@ -46,7 +46,7 @@ public class SecurityConfiguration {
 			.antMatchers("/authenticate").permitAll()	// let anyone try to create a token
 			.antMatchers("/api/hello").hasRole("USER")
 			.antMatchers("/api/admin").hasRole("ADMIN")
-			.antMatchers(HttpMethod.GET, "/api/user").hasRole("ADMIN") // don't want just anyone to be able to get all user info
+			//.antMatchers(HttpMethod.GET, "/api/user").hasRole("ADMIN") // don't want just anyone to be able to get all user info
 			.antMatchers("/api/all").permitAll()
 			.antMatchers(HttpMethod.POST, "/api/user").permitAll() // anyone can create a user
 			.anyRequest().authenticated() // if not specified, all other end points need a user login
