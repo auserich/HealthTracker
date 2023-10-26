@@ -1,0 +1,12 @@
+.card {
+	width: 18rem;
+	padding: 10px;
+	margin: auto;
+}
+
+.centered-container {
+	display: flex;
+	justify-content: ccenter;
+	align-items: center;
+	height: 100vh;
+}

@@ -35,6 +35,16 @@ public class UserService {
 		return found.get();
 	}
 	
+	public User getUserByUsername(String username) throws ResourceNotFoundException {
+		Optional<User> found = repo.findByUsername(username);
+		
+		if (found.isEmpty()) {
+			throw new ResourceNotFoundException("User", -1);
+		}
+		
+		return found.get();
+	}
+	
 	public User createUser(User user) throws UsernameTakenException {
 		Optional<User> exists = repo.findByUsername(user.getUsername());
 		
