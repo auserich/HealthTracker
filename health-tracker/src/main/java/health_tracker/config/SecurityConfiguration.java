@@ -41,7 +41,7 @@ public class SecurityConfiguration {
 	@Bean
 	protected SecurityFilterChain filterChain( HttpSecurity http ) throws Exception {
 		
-		http.csrf().disable()
+		http.cors().and().csrf().disable()
 			.authorizeRequests()
 			.antMatchers("/authenticate").permitAll()	// let anyone try to create a token
 			.antMatchers("/api/hello").hasRole("USER")
