@@ -4,6 +4,9 @@
 	margin: auto;
 }
 
+.card label {
+}
+
 .centered-container {
 	display: flex;
 	justify-content: ccenter;

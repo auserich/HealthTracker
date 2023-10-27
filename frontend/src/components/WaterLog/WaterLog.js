@@ -17,10 +17,22 @@ const WaterLog = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
+		const ounces = parseInt(waterOunces, 10);
+
+		if (isNaN(ounces)) {
+			console.error("Invalid input for ounces.");
+			return;
+		} else {
+			console.log("Yay int");
+		}
+
 		const waterLogData = {
 			ounces: waterOunces,
 			date: waterDate,
 		};
+
+		console.log("ounces: ", waterOunces);
+		console.log("date: ", waterDate);
 
 		fetch("http://localhost:8080/api/water", {
 			method: "POST",
@@ -35,7 +47,6 @@ const WaterLog = () => {
 				console.log("Data saved:", data);
 			})
 			.catch((error) => {
-				console.log(localStorage.getItem("jwtToken"));
 				console.error("Error:", error);
 			});
 	};

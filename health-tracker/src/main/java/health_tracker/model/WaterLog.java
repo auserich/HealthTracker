@@ -1,5 +1,6 @@
 package health_tracker.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,9 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-public class WaterLog {
+public class WaterLog implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -20,7 +25,7 @@ public class WaterLog {
 	@Column(name = "ounces", nullable = false)
 	private Integer ounces;
 	
-	//@Column(nullable = false)
+	@Column(nullable = false)
 	private Date date;
 	
 	@ManyToOne
@@ -31,26 +36,43 @@ public class WaterLog {
 		super();
 	}
 
-	public WaterLog(Integer id, Integer ounces, Date date) {
+	
+
+	public WaterLog(Integer id, Integer ounces, Date date, User user) {
 		super();
 		this.id = id;
 		this.ounces = ounces;
 		this.date = date;
+		this.user = user;
 	}
+
+
 
 	public Integer getId() { return id; } 
 	public void setId(Integer id) { this.id = id; } 
 
 	public Integer getOunces() { return ounces; } 
-	public void setOunces(Integer waterLogOunces) { this.ounces = waterLogOunces; } 
+	public void setOunces(Integer waterLogOunces) { this.ounces = waterLogOunces; }
 
-	public Date getDate() { return date; } 
-	public void setDate(Date date) { this.date = date; }
+	public Date getDate() {
+		return date;
+	}
 
-	@Override
-	public String toString() {
-		return "WaterLog [id=" + id + ", ounces=" + ounces + ", date=" + date + ", user=" + user + "]";
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+
+
+	public User getUser() {
+		return user;
+	}
+
+
+
+	public void setUser(User user) {
+		this.user = user;
 	} 
 
-	
+
 }

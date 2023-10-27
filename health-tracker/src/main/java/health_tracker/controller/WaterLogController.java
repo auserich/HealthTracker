@@ -1,5 +1,7 @@
 package health_tracker.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +30,16 @@ public class WaterLogController {
 	
 	@Autowired
 	UserService userService;
+	
+	@GetMapping("/water")
+	public ResponseEntity<?> getAllWaterLogs() throws ResourceNotFoundException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username = userDetails.getUsername();
+		User found = userService.getUserByUsername(username);
+		
+		List<WaterLog> waterLogs = service.getUserWaterLogs(found.getId());
+		return ResponseEntity.status(200).body(waterLogs);
+	}
 	
 	@GetMapping("/water/{id}")
 	public ResponseEntity<?> getWaterLogById(@PathVariable int id) throws ResourceNotFoundException {

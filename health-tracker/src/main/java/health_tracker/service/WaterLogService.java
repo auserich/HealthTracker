@@ -1,5 +1,7 @@
 package health_tracker.service;
 
+import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,10 @@ public class WaterLogService {
 	@Autowired
 	WaterRepository repo;
 	
+	public List<WaterLog> getUserWaterLogs(int userId) {
+		return repo.getUserWaterLogs(userId);
+	}
+	
 	public WaterLog getWaterLogById(int id) throws ResourceNotFoundException {
 		Optional<WaterLog> found = repo.findById(id);
 		
@@ -28,8 +34,9 @@ public class WaterLogService {
 	
 	public WaterLog createWaterLog(WaterLog water, User user) {
 		water.setId(null);
-		WaterLog created = repo.save(water);
-		return created;
+		
+		WaterLog created = new WaterLog(null, water.getOunces(), water.getDate(), user);
+		return repo.save(created);
 	}
 	
 	public WaterLog updateWaterLog(WaterLog water) throws ResourceNotFoundException {
