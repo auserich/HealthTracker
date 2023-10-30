@@ -6,6 +6,7 @@ import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import WaterLog from "./components/WaterLog/WaterLog";
 import WeekDisplay from "./components/WeekDisplay/WeekDisplay";
+import WaterDashboard from "./components/WaterDashboard/WaterDashboard";
 
 function App() {
 	return (
@@ -14,7 +15,7 @@ function App() {
 				<Route path="/" element={<Landing />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<Signup />} />
-				<Route path="/water" element={<WaterLog />} />
+				<Route path="/water" element={<WaterDashboard />} />
 			</Routes>
 		</div>
 	);

@@ -66,7 +66,6 @@ const WaterLog = () => {
 	};
 
 	const fetchWaterLogsForWeek = (startDate, userId) => {
-		// const url = `http://localhost:8080/api/water/${startDate}/${userId}`;
 		const url = `http://localhost:8080/api/water/${userId}`;
 
 		console.log("startDate: ", startDate);
@@ -112,36 +111,12 @@ const WaterLog = () => {
 								onChange={handleDateChange}
 							/>
 						</Form.Group>
-
-						{/* Test */}
-						{/* <Form.Group className="mb-3">
-						<Form.Label>Username</Form.Label>
-						<Form.Control type="text" placeholder="Enter user" />
-					</Form.Group> */}
-
 						<Button variant="primary" type="submit">
 							Submit
 						</Button>
 					</Form>
 				</Card>
 			</div>
-			{/* <WeekDisplay selectedDate={new Date(2023, 9, 28)} /> */}
-			<WeekDisplay selectedDate={new Date()} />
-
-			<Form>
-				<Form.Group className="mb-3">
-					<Form.Label>Test</Form.Label>
-					<Form.Control
-						type="date"
-						placeholder="Enter date"
-						value={testDate}
-						onChange={handleTestDateChange}
-					/>
-				</Form.Group>
-				<Button variant="primary" onClick={handleRetrieveWeekLogs}>
-					Test
-				</Button>
-			</Form>
 		</>
 	);
 };
