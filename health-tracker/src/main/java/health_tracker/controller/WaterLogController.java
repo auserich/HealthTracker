@@ -1,5 +1,6 @@
 package health_tracker.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import health_tracker.exception.ResourceNotFoundException;
@@ -31,19 +33,25 @@ public class WaterLogController {
 	@Autowired
 	UserService userService;
 	
-	@GetMapping("/water")
-	public ResponseEntity<?> getAllWaterLogs() throws ResourceNotFoundException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username = userDetails.getUsername();
-		User found = userService.getUserByUsername(username);
-		
-		List<WaterLog> waterLogs = service.getUserWaterLogs(found.getId());
+//	@GetMapping("/water")
+//	public ResponseEntity<?> getAllWaterLogs() throws ResourceNotFoundException {
+//		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		String username = userDetails.getUsername();
+//		User found = userService.getUserByUsername(username);
+//		
+//		List<WaterLog> waterLogs = service.getUserWaterLogs(found.getId());
+//		return ResponseEntity.status(200).body(waterLogs);
+//	}
+	
+	@GetMapping("/water/{date}/{id}")
+	public ResponseEntity<?> getAllWaterLogsByDateAndUserId(@PathVariable String date, @PathVariable int id) {
+		List<WaterLog> waterLogs = service.getAllUserWaterLogs(id, date);
 		return ResponseEntity.status(200).body(waterLogs);
 	}
 	
 	@GetMapping("/water/{id}")
 	public ResponseEntity<?> getWaterLogById(@PathVariable int id) throws ResourceNotFoundException {
-		WaterLog found = service.getWaterLogById(id);
+		List<WaterLog> found = service.getUserWaterLogs(id);
 		return ResponseEntity.status(200).body(found);
 	}
 	

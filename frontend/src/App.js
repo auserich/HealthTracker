@@ -5,6 +5,7 @@ import Landing from "./components/Landing/Landing";
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import WaterLog from "./components/WaterLog/WaterLog";
+import WeekDisplay from "./components/WeekDisplay/WeekDisplay";
 
 function App() {
 	return (

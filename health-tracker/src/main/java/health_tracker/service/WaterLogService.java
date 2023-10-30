@@ -1,6 +1,7 @@
 package health_tracker.service;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,33 @@ public class WaterLogService {
 	
 	@Autowired
 	WaterRepository repo;
+	
+	public List<WaterLog> getAllUserWaterLogs(int userId, String currentDate) {
+//		SimpleDateFormat sm = new SimpleDateFormat("MM-dd-yyyy");
+//		String strDate = sm.format(currentDate);
+//		return repo.getAllUserWaterLogs(strDate, userId);
+		
+		// Parse the currentDate string into a Date object
+        System.out.println("currentDate: " + currentDate);
+        //currentDate = "2023-10-28";
+        List<WaterLog> waterLogs = repo.getAllUserWaterLogs(currentDate, userId);
+        System.out.println(waterLogs);
+        return waterLogs;
+	}
+	
+	private Date parseDateStringToDate(String dateString) {
+        // Implement a method to parse the date string into a Date object
+        // You can use SimpleDateFormat or another method to achieve this
+        // Example using SimpleDateFormat:
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return sdf.parse(dateString);
+        } catch (Exception e) {
+            // Handle parsing errors
+            e.printStackTrace();
+            return null;
+        }
+    }
 	
 	public List<WaterLog> getUserWaterLogs(int userId) {
 		return repo.getUserWaterLogs(userId);

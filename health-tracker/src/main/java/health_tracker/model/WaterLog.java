@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 public class WaterLog implements Serializable {
 	
@@ -26,7 +24,7 @@ public class WaterLog implements Serializable {
 	private Integer ounces;
 	
 	@Column(nullable = false)
-	private Date date;
+	private String date;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -38,7 +36,7 @@ public class WaterLog implements Serializable {
 
 	
 
-	public WaterLog(Integer id, Integer ounces, Date date, User user) {
+	public WaterLog(Integer id, Integer ounces, String date, User user) {
 		super();
 		this.id = id;
 		this.ounces = ounces;
@@ -54,11 +52,11 @@ public class WaterLog implements Serializable {
 	public Integer getOunces() { return ounces; } 
 	public void setOunces(Integer waterLogOunces) { this.ounces = waterLogOunces; }
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
