@@ -1,6 +1,7 @@
 import React, { Component, useState } from "react";
 import { Card, Form, Button } from "react-bootstrap";
 import WeekDisplay from "../WeekDisplay/WeekDisplay.js";
+import "./WaterLog.css";
 
 const WaterLog = () => {
 	const [waterOunces, setWaterOunces] = useState("");
@@ -90,7 +91,7 @@ const WaterLog = () => {
 	return (
 		<>
 			<div className="centered-container">
-				<Card className="card">
+				<Card className="water-log">
 					<Card.Title>Water Log</Card.Title>
 					<Form onSubmit={handleSubmit}>
 						<Form.Group className="mb-3">
@@ -124,8 +125,8 @@ const WaterLog = () => {
 					</Form>
 				</Card>
 			</div>
-			<WeekDisplay selectedDate={new Date(2023, 9, 28)} />
-			<WeekDisplay selectedDate={new Date(2024, 0, 2)} />
+			{/* <WeekDisplay selectedDate={new Date(2023, 9, 28)} /> */}
+			<WeekDisplay selectedDate={new Date()} />
 
 			<Form>
 				<Form.Group className="mb-3">
