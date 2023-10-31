@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { Row, Col, Card, Container, Form, Button } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Card, Form, Button } from "react-bootstrap";
 import "./WeekDisplay.css";
 import moment from "moment"; // Import Moment.js
 
 const WeekDisplay = () => {
 	const [currentDate, setCurrentDate] = useState(moment()); // Initialize with the current date using Moment.js
 	const [waterLogs, setWaterLogs] = useState({});
+	const [userId, setUserId] = useState(null); // Initialize userId as null
 	const days = [];
 
 	const firstDayOfWeek = moment(currentDate);
@@ -21,11 +22,34 @@ const WeekDisplay = () => {
 		setCurrentDate(moment(e.target.value)); // Update the selected date using Moment.js
 	};
 
-	const userId = 1;
-	const handleRetrieveWeekLogs = () => {
+	useEffect(() => {
+		fetchUserId();
+	}, []);
+
+	const fetchUserId = () => {
+		// Make a request to your "whoami" endpoint to get the user's ID
+		fetch("http://localhost:8080/api/user/whoami", {
+			method: "GET",
+			headers: {
+				Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+			},
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				// Assuming the user's ID is stored in a property called "id" in the response data
+				const user_id = data.id;
+
+				// Now, you have the user's ID, so you can use it to fetch water logs
+				setUserId(user_id); // Set userId in the component's state
+			})
+			.catch((error) => {
+				console.error("Error fetching user data:", error);
+			});
+	};
+
+	const handleRetrieveWeekLogs = (userId) => {
 		const startDate = firstDayOfWeek.format("YYYY-MM-DD"); // Format the start date
 		const endDate = lastDayOfWeek.format("YYYY-MM-DD"); // Format the end date
-		const userId = 1;
 
 		fetchWaterLogsForWeek(startDate, endDate, userId);
 	};
@@ -43,10 +67,6 @@ const WeekDisplay = () => {
 			},
 		})
 			.then((response) => response.json())
-			// .then((data) => {
-			// 	console.log("Water logs for the week:", data);
-			// 	// Update your state or do something with the data
-			// })
 			.then((data) => {
 				console.log("Water logs for the week:", data);
 
@@ -57,12 +77,6 @@ const WeekDisplay = () => {
 				const logsWithinWeek = data.filter((log) => {
 					return log.date >= startDate && log.date <= endDate;
 				});
-
-				// // Now, you have the logs for the current week, and you can map the "ounces" value to the respective date
-				// const waterLogsByDate = {};
-				// logsWithinWeek.forEach((log) => {
-				// 	waterLogsByDate[log.date] = log.ounces;
-				// });
 
 				data.forEach((log) => {
 					if (log.date >= startDate && log.date <= endDate) {
@@ -123,7 +137,10 @@ const WeekDisplay = () => {
 							onChange={handleDateChange}
 						/>
 					</Form.Group>
-					<Button variant="primary" onClick={handleRetrieveWeekLogs}>
+					<Button
+						variant="primary"
+						onClick={() => handleRetrieveWeekLogs(userId)}
+					>
 						Get Logs
 					</Button>
 				</Form>

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +37,14 @@ public class UserController {
 	@GetMapping("/user/{id}")
 	public ResponseEntity<?> getUserById(@PathVariable int id) throws ResourceNotFoundException {
 		User found = service.getUserById(id);
+		return ResponseEntity.status(200).body(found);
+	}
+	
+	@GetMapping("/user/whoami")
+	public ResponseEntity<?> getCurrentUser() throws ResourceNotFoundException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username = userDetails.getUsername();
+		User found = service.getUserByUsername(username);
 		return ResponseEntity.status(200).body(found);
 	}
 	
