@@ -1,0 +1,12 @@
+body{
+    background-image: linear-gradient(to bottom,rgb(135, 206, 235), rgb(141, 221, 125));
+    height:100vh;
+}
+
+.centered-container {
+	display: flex;
+	justify-content: ccenter;
+	align-items: center;
+	margin-top: 100px;
+	margin-bottom: 100px;
+}
