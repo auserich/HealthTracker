@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,52 +16,55 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import health_tracker.exception.ResourceNotFoundException;
-import health_tracker.exception.UsernameTakenException;
 import health_tracker.model.User;
+import health_tracker.model.WaterLog;
 import health_tracker.service.UserService;
+import health_tracker.service.WaterLogService;
 
-@CrossOrigin(allowedHeaders="Access-Control-Allow-Origin")
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public class WaterLogController {
 	
 	@Autowired
-	UserService service;
+	WaterLogService service;
 	
-	@GetMapping("/user")
-	public List<User> getAllUsers() {
-		return service.getAllUsers();
+	@Autowired
+	UserService userService;
+	
+	@GetMapping("/water/{date}/{id}")
+	public ResponseEntity<?> getAllWaterLogsByDateAndUserId(@PathVariable String date, @PathVariable int id) {
+		List<WaterLog> waterLogs = service.getAllUserWaterLogs(id, date);
+		return ResponseEntity.status(200).body(waterLogs);
 	}
 	
-	@GetMapping("/user/{id}")
-	public ResponseEntity<?> getUserById(@PathVariable int id) throws ResourceNotFoundException {
-		User found = service.getUserById(id);
+	@GetMapping("/water/{id}")
+	public ResponseEntity<?> getWaterLogById(@PathVariable int id) throws ResourceNotFoundException {
+		List<WaterLog> found = service.getUserWaterLogs(id);
 		return ResponseEntity.status(200).body(found);
 	}
 	
-	@GetMapping("/user/whoami")
-	public ResponseEntity<?> getCurrentUser() throws ResourceNotFoundException {
+	@PostMapping("/water")
+	public ResponseEntity<?> createWaterLog(@RequestBody WaterLog water) throws ResourceNotFoundException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String username = userDetails.getUsername();
-		User found = service.getUserByUsername(username);
-		return ResponseEntity.status(200).body(found);
-	}
-	
-	@PostMapping("/user")
-	public ResponseEntity<?> createUser(@RequestBody User user) throws UsernameTakenException {
-		User created = service.createUser(user);
+		User found = userService.getUserByUsername(username);
+		
+		System.out.println(found);
+		System.out.println(water);
+		
+		WaterLog created = service.createWaterLog(water, found);
 		return ResponseEntity.status(200).body(created);
 	}
 	
-	@PutMapping("/user")
-	public ResponseEntity<?> updateUser(@RequestBody User user) throws ResourceNotFoundException {
-		User updated = service.updateUser(user);
+	@PutMapping("/water")
+	public ResponseEntity<?> updateWaterLog(@RequestBody WaterLog water) throws ResourceNotFoundException {
+		WaterLog updated = service.updateWaterLog(water);
 		return ResponseEntity.status(200).body(updated);
 	}
 	
-	@DeleteMapping("/user/{id}")
-	public ResponseEntity<?> deleteUserById(@PathVariable int id) throws ResourceNotFoundException {
-		User deleted = service.deleteUserById(id);
+	@DeleteMapping("/water/{id}")
+	public ResponseEntity<?> deleteWaterLogById(@PathVariable int id) throws ResourceNotFoundException {
+		WaterLog deleted = service.deleteWaterLogById(id);
 		return ResponseEntity.status(200).body(deleted);
 	}
 }

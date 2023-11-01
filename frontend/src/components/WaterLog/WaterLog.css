@@ -1,0 +1,16 @@
+.water-log {
+	width: 18rem;
+	padding: 10px;
+	margin: auto;
+}
+
+.card label {
+}
+
+.centered-container {
+	display: flex;
+	justify-content: ccenter;
+	align-items: center;
+	margin-top: 100px;
+	margin-bottom: 100px;
+}

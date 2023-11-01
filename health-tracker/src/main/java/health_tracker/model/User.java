@@ -1,9 +1,13 @@
 package health_tracker.model;
 
 import java.io.Serializable;
+<<<<<<< HEAD
 import java.util.ArrayList;
+=======
+>>>>>>> c7e013c45a0d28bfeebed903f4bb106d45b41310
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +16,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+<<<<<<< HEAD
+=======
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+>>>>>>> c7e013c45a0d28bfeebed903f4bb106d45b41310
 
 @Entity
 public class User implements Serializable {
@@ -44,10 +54,15 @@ public class User implements Serializable {
 	
 	@Column(nullable = false)
 	private String email;
+	
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<WaterLog> waterLog;
 
 	public User() { }
-	
-	public User(Integer id, String username, String password, Role role, boolean enabled, String email) {
+
+	public User(Integer id, String username, String password, Role role, boolean enabled, String email,
+			List<WaterLog> waterLog) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -55,6 +70,7 @@ public class User implements Serializable {
 		this.role = role;
 		this.enabled = enabled;
 		this.email = email;
+		this.waterLog = waterLog;
 	}
 
 	public Integer getId() { return id; } 
@@ -73,6 +89,16 @@ public class User implements Serializable {
 	public void setEnabled(boolean enabled) { this.enabled = enabled; } 
 
 	public String getEmail() { return email; } 
-	public void setEmail(String email) { this.email = email; } 
+	public void setEmail(String email) { this.email = email; }
+
+	public List<WaterLog> getWaterLog() {
+		return waterLog;
+	}
+
+	public void setWaterLog(List<WaterLog> waterLog) {
+		this.waterLog = waterLog;
+	} 
+	
+	
 
 }
