@@ -28,7 +28,8 @@ const Login = () => {
 				const data = await response.json();
 				const { jwt } = data;
 				localStorage.setItem("jwtToken", jwt);
-				//navigate( "" ); wherever we want our main page to be
+				localStorage.setItem("username", username);
+				navigate("/dashboard");
 			} else {
 				setSuccessMessage("");
 				setErrorMessage("Login failed. Please check your information.");
@@ -38,60 +39,59 @@ const Login = () => {
 			setSuccessMessage("");
 			setErrorMessage("An error occurred. Please try again later.");
 		}
-	};
 
-	return (
-		<div className="login-container">
-			<div
-				className="login-text-container"
-				style={{
-					marginBottom: "5vh",
-					marginTop: "5vh",
-					border: "5px solid black",
-					backgroundColor: "rgba(0,20,0,0.6)",
-				}}
-			>
-				<h1>Login to your Account</h1>
+		return (
+			<div className="login-container">
+				<div
+					className="login-text-container"
+					style={{
+						marginBottom: "5vh",
+						marginTop: "5vh",
+						border: "5px solid black",
+						backgroundColor: "rgba(0,20,0,0.6)",
+					}}
+				>
+					<h1>Login to your Account</h1>
 
-				<div className="loginbox">
-					<label htmlFor="username">Username</label>
-					<br />
-					<input
-						type="text"
-						id="Username"
-						onChange={(e) => setUsername(e.target.value)}
-					/>
+					<div className="loginbox">
+						<label htmlFor="username">Username</label>
+						<br />
+						<input
+							type="text"
+							id="Username"
+							onChange={(e) => setUsername(e.target.value)}
+						/>
+					</div>
+
+					<div className="loginbox">
+						<label htmlFor="password">Password</label>
+						<br />
+						<input
+							type="password"
+							id="Password"
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+					</div>
+
+					<div className="login">
+						<button
+							style={{ marginLeft: "-1vw" }}
+							onClick={handleLogin}
+						>
+							Login
+						</button>
+						<a href="http://localhost:3000/">
+							<button>Back to Home</button>
+						</a>
+					</div>
+
+					{successMessage && (
+						<p style={{ color: "green" }}>{successMessage}</p>
+					)}
+					{errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 				</div>
-
-				<div className="loginbox">
-					<label htmlFor="password">Password</label>
-					<br />
-					<input
-						type="password"
-						id="Password"
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-				</div>
-
-				<div className="login">
-					<button
-						style={{ marginLeft: "-1vw" }}
-						onClick={handleLogin}
-					>
-						Login
-					</button>
-					<a href="http://localhost:3000/">
-						<button>Back to Home</button>
-					</a>
-				</div>
-
-				{successMessage && (
-					<p style={{ color: "green" }}>{successMessage}</p>
-				)}
-				{errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 			</div>
-		</div>
-	);
-};
-
-export default Login;
+		);
+	};
+}
+	export default Login;

@@ -1,6 +1,10 @@
 package health_tracker.model;
 
 import java.io.Serializable;
+<<<<<<< HEAD
+import java.util.ArrayList;
+=======
+>>>>>>> c7e013c45a0d28bfeebed903f4bb106d45b41310
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -12,9 +16,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+<<<<<<< HEAD
+=======
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+>>>>>>> c7e013c45a0d28bfeebed903f4bb106d45b41310
 
 @Entity
 public class User implements Serializable {
@@ -31,6 +38,9 @@ public class User implements Serializable {
 	
 	@Column(nullable = false)
 	String username;
+	
+	 @OneToMany(mappedBy = "user")
+	    private List<Exercise> exercises = new ArrayList<>();
 	
 	@Column(nullable = false)
 	String password;
