@@ -1,8 +1,13 @@
-import React from 'react'
+import React, {useEffect} from "react";
 import "./Landing.css"
 import scale from './scale.png'
 
 const Landing = () => {
+
+  useEffect( () => {
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("username");
+  });
 
 
   return (
