@@ -1,6 +1,8 @@
 package health_tracker.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class User implements Serializable {
@@ -25,6 +28,9 @@ public class User implements Serializable {
 	
 	@Column(nullable = false)
 	String username;
+	
+	 @OneToMany(mappedBy = "user")
+	    private List<Exercise> exercises = new ArrayList<>();
 	
 	@Column(nullable = false)
 	String password;

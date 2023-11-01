@@ -1,17 +1,17 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import "./Login.css";
 
 const Login = () => {
 
-  const [username,setUsername] = useState("");
-  const [password,setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  
+
   const handleLogin = async () => {
-    
+
     const requestObject =
     {
       "username": username,
@@ -31,7 +31,8 @@ const Login = () => {
         const data = await response.json();
         const { jwt } = data;
         localStorage.setItem("jwtToken", jwt);
-        //navigate( "" ); wherever we want our main page to be
+        localStorage.setItem("username", username);
+        navigate("/dashboard");
       } else {
         setSuccessMessage("");
         setErrorMessage("Login failed. Please check your information.");
@@ -46,7 +47,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <div className="login-text-container" style={{marginBottom:'5vh',marginTop:'5vh',border: '5px solid black',backgroundColor:'rgba(0,20,0,0.6)'}}>
+      <div className="login-text-container" style={{ marginBottom: '5vh', marginTop: '5vh', border: '5px solid black', backgroundColor: 'rgba(0,20,0,0.6)' }}>
 
         <h1>Login to your Account</h1>
 
@@ -71,15 +72,14 @@ const Login = () => {
         </div>
 
         <div className="login">
-        <button style={{marginLeft:'-1vw'}} onClick={handleLogin}>Login</button>
-        <a href="http://localhost:3000/">
-          <button>Back to Home</button>
-        </a>
+          <button style={{ marginLeft: '-1vw' }} onClick={handleLogin}>Login</button>
+          <a href="http://localhost:3000/">
+            <button>Back to Home</button>
+          </a>
         </div>
-
         {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-        
+
       </div>
     </div>
   );
