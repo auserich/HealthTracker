@@ -6,8 +6,9 @@ function WaterDashboard() {
 	return (
 		<>
 			<h3>Water Dashboard</h3>
-			<WaterLog />
+
 			<WeekDisplay />
+			<WaterLog />
 		</>
 	);
 }

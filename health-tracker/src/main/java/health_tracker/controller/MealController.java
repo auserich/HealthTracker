@@ -16,59 +16,55 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import health_tracker.exception.ResourceNotFoundException;
+import health_tracker.model.Meal;
 import health_tracker.model.User;
-import health_tracker.model.WaterLog;
+import health_tracker.service.MealService;
 import health_tracker.service.UserService;
-import health_tracker.service.WaterLogService;
 
 @RestController
 @RequestMapping("/api")
-public class WaterLogController {
-	
+public class MealController {
+
 	@Autowired
-	WaterLogService service;
+	MealService service;
 	
 	@Autowired
 	UserService userService;
 	
-	@GetMapping("/water/{date}/{id}")
-	public ResponseEntity<?> getAllWaterLogsByDateAndUserId(@PathVariable String date, @PathVariable int id) {
-		List<WaterLog> waterLogs = service.getAllUserWaterLogs(id, date);
-		return ResponseEntity.status(200).body(waterLogs);
+	@GetMapping("/meal")
+	public List<Meal> getAllMeals() {
+		return service.getAllMeals();
 	}
 	
-	@GetMapping("/water/{userId}")
-	public ResponseEntity<?> getWaterLogByUserId(@PathVariable int userId) throws ResourceNotFoundException {
-		List<WaterLog> found = service.getUserWaterLogs(userId);
+	@GetMapping("/meal/{userId}")
+	public ResponseEntity<?> getAllUserMeals(@PathVariable int userId) {
+		List<Meal> found = service.getAllUserMeals(userId);
 		return ResponseEntity.status(200).body(found);
 	}
 	
-	@PostMapping("/water")
-	public ResponseEntity<?> createWaterLog(@RequestBody WaterLog water) throws ResourceNotFoundException {
+	@PostMapping("/meal")
+	public ResponseEntity<?> createMeal(@RequestBody Meal meal) throws ResourceNotFoundException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String username = userDetails.getUsername();
 		User found = userService.getUserByUsername(username);
 		
-		System.out.println(found);
-		System.out.println(water);
-		
-		WaterLog created = service.createWaterLog(water, found);
+		Meal created = service.createMeal(meal, found);
 		return ResponseEntity.status(200).body(created);
 	}
 	
-	@PutMapping("/water")
-	public ResponseEntity<?> updateWaterLog(@RequestBody WaterLog water) throws ResourceNotFoundException {
+	@PutMapping("/meal")
+	public ResponseEntity<?> updateMeal(@RequestBody Meal meal) throws ResourceNotFoundException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String username = userDetails.getUsername();
 		User found = userService.getUserByUsername(username);
 		
-		WaterLog updated = service.updateWaterLog(water, found);
+		Meal updated = service.updateMeal(meal, found);
 		return ResponseEntity.status(200).body(updated);
 	}
 	
-	@DeleteMapping("/water/{id}")
-	public ResponseEntity<?> deleteWaterLogById(@PathVariable int id) throws ResourceNotFoundException {
-		WaterLog deleted = service.deleteWaterLogById(id);
+	@DeleteMapping("meal/{id}")
+	public ResponseEntity<?> deleteMeal(@PathVariable int id) throws ResourceNotFoundException {
+		Meal deleted = service.deleteMealById(id);
 		return ResponseEntity.status(200).body(deleted);
 	}
 }

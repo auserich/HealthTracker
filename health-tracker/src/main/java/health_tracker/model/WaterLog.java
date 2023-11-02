@@ -1,7 +1,6 @@
 package health_tracker.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,8 +33,6 @@ public class WaterLog implements Serializable {
 		super();
 	}
 
-	
-
 	public WaterLog(Integer id, Integer ounces, String date, User user) {
 		super();
 		this.id = id;
@@ -43,34 +40,17 @@ public class WaterLog implements Serializable {
 		this.date = date;
 		this.user = user;
 	}
-
-
-
+	
 	public Integer getId() { return id; } 
 	public void setId(Integer id) { this.id = id; } 
 
 	public Integer getOunces() { return ounces; } 
-	public void setOunces(Integer waterLogOunces) { this.ounces = waterLogOunces; }
+	public void setOunces(Integer waterLogOunces) { this.ounces = waterLogOunces; } 
 
-	public String getDate() {
-		return date;
-	}
+	public String getDate() { return date; } 
+	public void setDate(String date) { this.date = date; } 
 
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-
-
-	public User getUser() {
-		return user;
-	}
-
-
-
-	public void setUser(User user) {
-		this.user = user;
-	} 
-
+	public User getUser() { return user; } 
+	public void setUser(User user) { this.user = user; } 
 
 }

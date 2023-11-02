@@ -44,13 +44,13 @@ public class WaterLogService {
 		return repo.save(created);
 	}
 	
-	public WaterLog updateWaterLog(WaterLog water) throws ResourceNotFoundException {
+	public WaterLog updateWaterLog(WaterLog water, User user) throws ResourceNotFoundException {
 		if (repo.existsById(water.getId())) {
-			WaterLog updated = repo.save(water);
-			return updated;
+			water.setUser(user);
+			return repo.save(water);
 		}
 		
-		throw new ResourceNotFoundException("WaterLog", water.getId());
+		return repo.save(new WaterLog(null, water.getOunces(), water.getDate(), user));
 	}
 	
 	public WaterLog deleteWaterLogById(int id) throws ResourceNotFoundException {

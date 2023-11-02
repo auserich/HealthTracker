@@ -29,8 +29,6 @@ const WaterLog = () => {
 		if (isNaN(ounces)) {
 			console.error("Invalid input for ounces.");
 			return;
-		} else {
-			console.log("Yay int");
 		}
 
 		const waterLogData = {
@@ -51,10 +49,10 @@ const WaterLog = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Data saved:", data);
+				console.log("Data saved: ", data);
 			})
 			.catch((error) => {
-				console.error("Error:", error);
+				console.error("Error: ", error);
 			});
 	};
 
@@ -90,7 +88,7 @@ const WaterLog = () => {
 	return (
 		<>
 			<div className="centered-container">
-				<Card className="water-log">
+				<Card className="log-card">
 					<Card.Title>Water Log</Card.Title>
 					<Form onSubmit={handleSubmit}>
 						<Form.Group className="mb-3">
