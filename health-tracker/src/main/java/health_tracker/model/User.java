@@ -52,6 +52,10 @@ public class User implements Serializable {
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<WaterLog> waterLog;
+	
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Meal> meal;
 
 	public User() { }
 

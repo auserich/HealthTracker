@@ -1,4 +1,4 @@
-.water-log {
+.log-card {
 	width: 18rem;
 	padding: 10px;
 	margin: auto;
@@ -9,7 +9,7 @@
 
 .centered-container {
 	display: flex;
-	justify-content: ccenter;
+	justify-content: center;
 	align-items: center;
 	margin-top: 100px;
 	margin-bottom: 100px;

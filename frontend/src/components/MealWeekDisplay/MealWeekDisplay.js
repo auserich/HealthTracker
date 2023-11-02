@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Card, Form, Button } from "react-bootstrap";
-import "./WeekDisplay.css";
+import "./MealWeekDisplay.css";
 import moment from "moment"; // Import Moment.js
 
-const WeekDisplay = () => {
+const MealWeekDisplay = () => {
 	const [currentDate, setCurrentDate] = useState(moment()); // Initialize with the current date using Moment.js
-	const [waterLogs, setWaterLogs] = useState({});
+	const [mealLogs, setMealLogs] = useState({});
+	const [expandedDays, setExpandedDays] = useState([]);
 	const [userId, setUserId] = useState(null); // Initialize userId as null
 	const days = [];
 
@@ -24,14 +25,7 @@ const WeekDisplay = () => {
 
 	useEffect(() => {
 		fetchUserId();
-		handleRetrieveWeekLogs(userId);
-	}, [currentDate]);
-
-	useEffect(() => {
-		if (userId) {
-			handleRetrieveWeekLogs(userId);
-		}
-	}, [userId]);
+	}, []);
 
 	const fetchUserId = () => {
 		// Make a request to your "whoami" endpoint to get the user's ID
@@ -46,7 +40,7 @@ const WeekDisplay = () => {
 				// Assuming the user's ID is stored in a property called "id" in the response data
 				const user_id = data.id;
 
-				// Now, you have the user's ID, so you can use it to fetch water logs
+				// Now, you have the user's ID, so you can use it to fetch meal logs
 				setUserId(user_id); // Set userId in the component's state
 			})
 			.catch((error) => {
@@ -54,15 +48,26 @@ const WeekDisplay = () => {
 			});
 	};
 
+	useEffect(() => {
+		fetchUserId();
+		handleRetrieveWeekLogs(userId);
+	}, [currentDate]);
+
+	useEffect(() => {
+		if (userId) {
+			handleRetrieveWeekLogs(userId);
+		}
+	}, [userId]);
+
 	const handleRetrieveWeekLogs = (userId) => {
 		const startDate = firstDayOfWeek.format("YYYY-MM-DD"); // Format the start date
 		const endDate = lastDayOfWeek.format("YYYY-MM-DD"); // Format the end date
 
-		fetchWaterLogsForWeek(startDate, endDate, userId);
+		fetchMealLogsForWeek(startDate, endDate, userId);
 	};
 
-	const fetchWaterLogsForWeek = (startDate, endDate, userId) => {
-		const url = `http://localhost:8080/api/water/${userId}`;
+	const fetchMealLogsForWeek = (startDate, endDate, userId) => {
+		const url = `http://localhost:8080/api/meal/${userId}`;
 
 		console.log("startDate: ", startDate);
 		console.log("userId: ", userId);
@@ -75,36 +80,40 @@ const WeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Water logs for the week:", data);
+				console.log("Meal logs for the week:", data);
 
-				// Aggregate the ounces for each date within the current week's range
-				const waterLogsByDate = {};
+				// Aggregate the calories for each date within the current week's range
+				const mealLogsByDate = {};
 
 				// Filter and map the logs that fall within the current week's range
 				const logsWithinWeek = data.filter((log) => {
 					return log.date >= startDate && log.date <= endDate;
 				});
 
-				data.forEach((log) => {
-					if (log.date >= startDate && log.date <= endDate) {
-						if (waterLogsByDate[log.date]) {
-							// If the date already exists, add the ounces to the existing total
-							waterLogsByDate[log.date] += log.ounces;
-						} else {
-							// If the date is encountered for the first time, set the ounces as is
-							waterLogsByDate[log.date] = log.ounces;
-						}
+				logsWithinWeek.forEach((log) => {
+					const logDate = log.date;
+					if (!mealLogsByDate[logDate]) {
+						mealLogsByDate[logDate] = {
+							calories: 0,
+							mealNames: [],
+						};
 					}
+					mealLogsByDate[logDate].calories += log.calories;
+					mealLogsByDate[logDate].mealNames.push(log.name);
 				});
 
-				console.log("Water logs within the week:", waterLogsByDate);
+				console.log("Meal logs within the week:", mealLogsByDate);
 
-				// Set the water logs state with the filtered data
-				setWaterLogs(waterLogsByDate);
+				// Set the meal logs state with the filtered data
+				setMealLogs(mealLogsByDate);
 			})
 			.catch((error) => {
-				console.error("Error fetching water logs:", error);
+				console.error("Error fetching meal logs:", error);
 			});
+	};
+
+	const capitalizeFirstLetter = (str) => {
+		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
 
 	for (let i = 0; i < 7; i++) {
@@ -112,8 +121,11 @@ const WeekDisplay = () => {
 		const formattedMonthYear = day.format("MMMM YYYY");
 		const dayOfWeek = day.format("dddd");
 		const date = day.format("D");
-		const data = waterLogs[day.format("YYYY-MM-DD")];
-		const ounces = waterLogs[day.format("YYYY-MM-DD")] || 0;
+		const data = mealLogs[day.format("YYYY-MM-DD")];
+		const calories = data ? data.calories : 0;
+		const mealNames = data
+			? data.mealNames.map((name) => capitalizeFirstLetter(name))
+			: [];
 
 		days.push(
 			<Col key={i}>
@@ -124,7 +136,12 @@ const WeekDisplay = () => {
 							<br />
 							{dayOfWeek} {date}
 						</Card.Title>
-						<p>Ounces: {ounces}</p>
+						<p>Calories: {calories}</p>
+						{mealNames.length > 0 ? (
+							<p>Meals: {mealNames.join(", ")}</p>
+						) : (
+							<p>No Meals</p>
+						)}
 					</Card.Body>
 				</Card>
 			</Col>
@@ -152,4 +169,4 @@ const WeekDisplay = () => {
 	);
 };
 
-export default WeekDisplay;
+export default MealWeekDisplay;
