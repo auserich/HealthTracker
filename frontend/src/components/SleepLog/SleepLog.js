@@ -1,12 +1,11 @@
 import React, { Component, useState } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
-import WeekDisplay from '../WeekDisplay/WeekDisplay.js';
+import SleepWeekDisplay from '../SleepWeekDisplay/SleepWeekDisplay.js';
 import "./SleepLog.css";
 
 const SleepLog = () => {
 	const [sleepMinutes, setSleepMinutes] = useState("");
 	const [sleepDate, setSleepDate] = useState("");
-
 	const [testDate, setTestDate] = useState("");
 
 	const handleMinutesChange = (e) => {
@@ -29,17 +28,14 @@ const SleepLog = () => {
 		if (isNaN(minutes)) {
 			console.error("Invalid input for minutes.");
 			return;
-		} else {
-			console.log("Valid Int");
 		}
-
 		const sleepLogData = {
 			minutes: sleepMinutes,
 			date: sleepDate,
 		};
 
-		console.log("ounces: ", waterOunces);
-		console.log("date: ", waterDate);
+		console.log("minutes: ", sleepMinutes);
+		console.log("date: ", sleepDate);
 
 		fetch("http://localhost:8080/api/sleep", {
 			method: "POST",
@@ -66,7 +62,6 @@ const SleepLog = () => {
 	};
 
 	const fetchSleepLogsForWeek = (startDate, userId) => {
-		// const url = `http://localhost:8080/api/sleep/${startDate}/${userId}`;
 		const url = `http://localhost:8080/api/sleep/${userId}`;
 
 		console.log("startDate: ", startDate);
@@ -84,7 +79,7 @@ const SleepLog = () => {
 				// Update your state or do something with the data
 			})
 			.catch((error) => {
-				console.error("Error fetching water logs:", error);
+				console.error("Error fetching sleep logs", error);
 			});
 	};
 
@@ -112,30 +107,12 @@ const SleepLog = () => {
 								onChange={handleDateChange}
 							/>
 						</Form.Group>
-                        
 						<Button variant="primary" type="submit">
 							Submit
 						</Button>
 					</Form>
 				</Card>
 			</div>
-			{/* <WeekDisplay selectedDate={new Date(2023, 9, 28)} /> */}
-			<WeekDisplay selectedDate={new Date()} />
-
-			<Form>
-				<Form.Group className="mb-3">
-					<Form.Label>Test</Form.Label>
-					<Form.Control
-						type="date"
-						placeholder="Enter date"
-						value={testDate}
-						onChange={handleTestDateChange}
-					/>
-				</Form.Group>
-				<Button variant="primary" onClick={handleRetrieveWeekLogs}>
-					Test
-				</Button>
-			</Form>
 		</>
 	);
 };

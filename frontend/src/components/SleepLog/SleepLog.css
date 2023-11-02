@@ -3,6 +3,12 @@ body{
     height:100vh;
 }
 
+.log-card {
+	width: 18rem;
+	padding: 10px;
+	margin: auto;
+}
+
 .centered-container {
 	display: flex;
 	justify-content: ccenter;

@@ -1,6 +1,5 @@
 package health_tracker.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +13,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import health_tracker.exception.ResourceNotFoundException;
 import health_tracker.model.SleepLog;
 import health_tracker.model.User;
-import health_tracker.model.WaterLog;
+
 import health_tracker.service.SleepLogService;
 import health_tracker.service.UserService;
-import health_tracker.service.WaterLogService;
+
 
 @RestController
 @RequestMapping("/api")
@@ -58,11 +56,20 @@ public class SleepLogController {
 		SleepLog created = service.createSleepLog(sleep, found);
 		return ResponseEntity.status(200).body(created);
 	}
+
+	@PutMapping("/sleep")
+	public ResponseEntity<?> updateSleepLog(@RequestBody SleepLog sleep) throws ResourceNotFoundException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username = userDetails.getUsername();
+		User found = userService.getUserByUsername(username);
+		
+		SleepLog updated = service.updateSleepLog(sleep, found);
+		return ResponseEntity.status(200).body(updated);
+	}
 	
 	@DeleteMapping("/sleep/{id}")
 	public ResponseEntity<?> deleteSleepLogById(@PathVariable int id) throws ResourceNotFoundException {
 		SleepLog deleted = service.deleteSleepLogById(id);
 		return ResponseEntity.status(200).body(deleted);
 	}
-
 }
