@@ -9,6 +9,7 @@ import ExerciseTracker from './components/ExerciseTracker/ExerciseTracker';
 import WaterLog from "./components/WaterLog/WaterLog";
 import WeekDisplay from "./components/WeekDisplay/WeekDisplay";
 import WaterDashboard from "./components/WaterDashboard/WaterDashboard";
+import MainDashboard from "./components/MainDashboard/MainDashboard";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/exercise-tracker" element={<ExerciseTracker/>} /> 
           <Route path="/water" element={<WaterDashboard />} />
+          <Route path="/main" element={<MainDashboard />} />
         </Routes>
       
     </div>

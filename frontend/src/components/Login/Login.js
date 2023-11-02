@@ -29,7 +29,7 @@ const Login = () => {
 				const { jwt } = data;
 				localStorage.setItem("jwtToken", jwt);
 				localStorage.setItem("username", username);
-				navigate("/dashboard");
+				navigate("/main");
 			} else {
 				setSuccessMessage("");
 				setErrorMessage("Login failed. Please check your information.");
@@ -39,6 +39,7 @@ const Login = () => {
 			setSuccessMessage("");
 			setErrorMessage("An error occurred. Please try again later.");
 		}
+	};
 
 		return (
 			<div className="login-container">
@@ -93,5 +94,4 @@ const Login = () => {
 			</div>
 		);
 	};
-}
 	export default Login;
