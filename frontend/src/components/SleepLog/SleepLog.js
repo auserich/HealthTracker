@@ -38,8 +38,8 @@ const SleepLog = () => {
 			date: sleepDate,
 		};
 
-		console.log("ounces: ", waterOunces);
-		console.log("date: ", waterDate);
+		//console.log("ounces: ", waterOunces);
+		//console.log("date: ", waterDate);
 
 		fetch("http://localhost:8080/api/sleep", {
 			method: "POST",
