@@ -25,9 +25,13 @@ public class MealService {
 		return repo.getAllUserMeals(userId);
 	}
 	
+	public List<Meal> getAllUserMealsFromDate(int userId, String date) {
+		return repo.getAllUserMealsFromDate(userId, date);
+	}
+	
 	public Meal createMeal(Meal meal, User user) {
 		meal.setId(null);
-		Meal created = new Meal(null, meal.getName(), meal.getCalories(), meal.getDate(), user);
+		Meal created = new Meal(null, meal.getName(), meal.getCalories(), meal.getDate(), meal.getMealType(), user);
 		return repo.save(created);
 	}
 	
@@ -37,7 +41,7 @@ public class MealService {
 			return repo.save(meal);
 		}
 		
-		return repo.save(new Meal(null, meal.getName(), meal.getCalories(), meal.getDate(), user));
+		return repo.save(new Meal(null, meal.getName(), meal.getCalories(), meal.getDate(), meal.getMealType(), user));
 	}
 		
 	public Meal deleteMealById(int id) throws ResourceNotFoundException {
