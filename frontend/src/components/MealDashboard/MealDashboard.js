@@ -1,14 +1,22 @@
+import { useNavigate } from "react-router-dom";
 import Meal from "../Meal/Meal";
 import MealWeekDisplay from "../MealWeekDisplay/MealWeekDisplay";
+import { Button } from "react-bootstrap";
 
-function MealDashboard() {
+const MealDashboard = () => {
+	const navigate = useNavigate();
+
+	const handleNavigateToMain = () => {
+		navigate("/main");
+	};
+
 	return (
 		<>
 			<h3>Meal Dashboard</h3>
 			<MealWeekDisplay />
-			<Meal />
+			<Button onClick={handleNavigateToMain}>Back To Dashboard</Button>
 		</>
 	);
-}
+};
 
 export default MealDashboard;

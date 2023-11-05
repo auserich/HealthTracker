@@ -42,12 +42,18 @@ public class MealController {
 		return ResponseEntity.status(200).body(found);
 	}
 	
+	@GetMapping("meal/{userId}/{date}")
+	public ResponseEntity<?> getAllUserMealsFromDate(@PathVariable int userId, @PathVariable String date) {
+		List<Meal> found = service.getAllUserMealsFromDate(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
+	
 	@PostMapping("/meal")
 	public ResponseEntity<?> createMeal(@RequestBody Meal meal) throws ResourceNotFoundException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String username = userDetails.getUsername();
 		User found = userService.getUserByUsername(username);
-		
+
 		Meal created = service.createMeal(meal, found);
 		return ResponseEntity.status(200).body(created);
 	}
