@@ -62,7 +62,7 @@ console.log("userID for the logged in user", userId);
 
 
 const handleGoToDashboard = () => {
-    navigate('/dashboard');
+    navigate('/main');
 };
 
 useEffect(() => {
