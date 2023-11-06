@@ -16,14 +16,18 @@ import Meal from "../Meal/Meal.js"; // Import the Meal component
 import { useNavigate } from "react-router-dom";
 
 const MealWeekDisplay = () => {
-	const [currentDate, setCurrentDate] = useState(moment()); // Initialize with the current date using Moment.js
+	const initialDate = localStorage.getItem("currentDate");
+	const [currentDate, setCurrentDate] = useState(
+		initialDate ? moment(initialDate) : moment()
+	);
+	//const [currentDate, setCurrentDate] = useState(moment()); // Initialize with the current date using Moment.js
 	const [mealLogs, setMealLogs] = useState([]);
-	const [expandedDays, setExpandedDays] = useState([]);
 	const [userId, setUserId] = useState(null); // Initialize userId as null
 	const days = [];
 	const [editMealLogData, setEditMealLogData] = useState(null);
 	const [editMode, setEditMode] = useState(false); // Add this state variable
 	const navigate = useNavigate();
+	const [selectedMealData, setSelectedMealData] = useState(null);
 
 	const [showAddMeal, setShowAddMeal] = useState(false);
 	// Function to open the modal
@@ -42,8 +46,12 @@ const MealWeekDisplay = () => {
 		// Close the modal
 		closeAddMealModal();
 
-		// Reload the page to reflect the changes
-		window.location.reload();
+		// Clear the selected meal data
+		setSelectedMealData(null);
+		console.log("still maybe not crashed");
+
+		// Instead of reloading the page, you can update the meal logs for the current week here
+		handleRetrieveWeekLogs(userId);
 	};
 
 	const firstDayOfWeek = moment(currentDate);
@@ -56,11 +64,17 @@ const MealWeekDisplay = () => {
 	const lastDayOfWeek = moment(firstDayOfWeek).day(6); // Get the last day (Saturday) of the selected week
 
 	const handleDateChange = (e) => {
-		setCurrentDate(moment(e.target.value)); // Update the selected date using Moment.js
+		// setCurrentDate(moment(e.target.value)); // Update the selected date using Moment.js
+
+		const newDate = moment(e.target.value);
+		setCurrentDate(newDate);
+
+		// Fetch the meal logs for the new date
+		handleRetrieveWeekLogs(userId, newDate);
 	};
 
 	const handleEditMealLog = (mealLog) => {
-		setEditMealLogData(mealLog);
+		setSelectedMealData(mealLog);
 		setEditMode(true); // Set editMode to true when opening the Meal component for editing
 		setShowAddMeal(true); // Open the Meal component in edit mode
 	};
@@ -92,18 +106,21 @@ const MealWeekDisplay = () => {
 
 	useEffect(() => {
 		fetchUserId();
-		handleRetrieveWeekLogs(userId);
+		//handleRetrieveWeekLogs(userId);
+		localStorage.setItem("currentDate", currentDate.format("YYYY-MM-DD"));
 	}, [currentDate]);
 
 	useEffect(() => {
 		if (userId) {
-			handleRetrieveWeekLogs(userId);
+			handleRetrieveWeekLogs(userId, currentDate);
 		}
-	}, [userId]);
+	}, [userId, currentDate]);
 
-	const handleRetrieveWeekLogs = (userId) => {
-		const startDate = firstDayOfWeek.format("YYYY-MM-DD"); // Format the start date
-		const endDate = lastDayOfWeek.format("YYYY-MM-DD"); // Format the end date
+	const handleRetrieveWeekLogs = (userId, newDate) => {
+		// const startDate = firstDayOfWeek.format("YYYY-MM-DD"); // Format the start date
+		// const endDate = lastDayOfWeek.format("YYYY-MM-DD"); // Format the end date
+		const startDate = moment(newDate).startOf("week").format("YYYY-MM-DD");
+		const endDate = moment(newDate).endOf("week").format("YYYY-MM-DD");
 
 		fetchMealLogsForWeek(startDate, endDate, userId);
 	};
@@ -209,8 +226,6 @@ const MealWeekDisplay = () => {
 			? data.map((meal) => meal.mealType).join(", ")
 			: "N/A";
 
-		console.log("DATA: ", data);
-
 		days.push(
 			<Col key={i}>
 				<Card className="day">
@@ -221,7 +236,7 @@ const MealWeekDisplay = () => {
 							{dayOfWeek} {date}
 						</Card.Title>
 						<p>Calories: {calories}</p>
-						{mealName !== "No Meal" ? (
+						{data && data.length !== 0 ? (
 							<p>Meals: {mealName}</p>
 						) : (
 							<p>No Meals</p>
@@ -249,7 +264,7 @@ const MealWeekDisplay = () => {
 			const dateKey = day.format("YYYY-MM-DD");
 			const data = mealLogs[index];
 			const dayMealLogs = data || []; // Ensure it's an array
-
+			console.log("DATA!!! ", data);
 			return (
 				<Accordion.Item key={index} eventKey={index.toString()}>
 					<Accordion.Header>
@@ -265,7 +280,6 @@ const MealWeekDisplay = () => {
 											<Col>{mealLog.calories}</Col>
 											<Col>
 												<Button
-													disabled
 													onClick={() =>
 														handleEditMealLog(
 															mealLog
@@ -328,15 +342,21 @@ const MealWeekDisplay = () => {
 					backdrop="static"
 				>
 					<Modal.Header closeButton>
-						<Modal.Title>Add Meal</Modal.Title>
+						<Modal.Title>
+							{editMode ? "Edit Meal" : "Add Meal"}
+						</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<Meal handleClose={handleAddMealSubmit} />
+						<Meal
+							editMode={editMode}
+							handleClose={handleAddMealSubmit}
+							mealData={selectedMealData}
+						/>
 					</Modal.Body>
 				</Modal>
 			</Card>
 			<Container className="day-details">
-				<Accordion>{renderAccordionItems()}</Accordion>
+				<Accordion alwaysOpen>{renderAccordionItems()}</Accordion>
 			</Container>
 		</>
 	);
