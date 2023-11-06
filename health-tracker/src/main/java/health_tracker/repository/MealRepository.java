@@ -13,4 +13,7 @@ public interface MealRepository extends JpaRepository<Meal, Integer> {
 	
 	@Query(value = "SELECT * FROM meal WHERE user_id = ?1", nativeQuery = true)
 	public List<Meal> getAllUserMeals(int userId);
+	
+	@Query(value = "SELECT * FROM meal WHERE user_id = ?1 AND date = ?2", nativeQuery = true)
+	public List<Meal> getAllUserMealsFromDate(int userId, String date);
 }
