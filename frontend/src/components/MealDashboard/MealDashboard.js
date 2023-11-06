@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Meal from "../Meal/Meal";
 import MealWeekDisplay from "../MealWeekDisplay/MealWeekDisplay";
 import { Button } from "react-bootstrap";
+import { Navbar } from "../Navbar/Navbar";
 
 const MealDashboard = () => {
 	const navigate = useNavigate();
@@ -12,9 +13,8 @@ const MealDashboard = () => {
 
 	return (
 		<>
-			<h3>Meal Dashboard</h3>
+			<Navbar></Navbar>
 			<MealWeekDisplay />
-			<Button onClick={handleNavigateToMain}>Back To Dashboard</Button>
 		</>
 	);
 };
