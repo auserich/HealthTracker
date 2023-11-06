@@ -13,7 +13,6 @@ import ExerciseTracker from "./components/ExerciseTracker/ExerciseTracker";
 import Meal from "./components/Meal/Meal";
 import MealDashboard from "./components/MealDashboard/MealDashboard";
 import MainDashboard from "./components/MainDashboard/MainDashboard";
-import SleepLog from "./components/SleepLog/SleepLog";
 
 function App() {
 	return (
@@ -27,7 +26,6 @@ function App() {
 				<Route path="/sleep" element={<SleepDashboard />} />
 				<Route path="/meal" element={<MealDashboard />} />
 				<Route path="/main" element={<MainDashboard />} />
-				<Route path="/sleep" element={<SleepLog />} />
 			</Routes>
 		</div>
 	);
