@@ -1,13 +1,18 @@
+import { useNavigate } from "react-router-dom";
 import React from "react";
-import SleepLog from "../SleepLog/SleepLog";
 import SleepWeekDisplay from "../SleepWeekDisplay/SleepWeekDisplay";
+import { Navbar } from "../Navbar/Navbar";
 
 function SleepDashboard() {
+	const navigate = useNavigate();
+
+	const handleNavigateToMain = () => {
+		navigate("/main");
+	};
 	return (
 		<>
-			<h3>Sleep Dashboard</h3>
+			<Navbar></Navbar>
 			<SleepWeekDisplay />
-			<SleepLog />
 		</>
 	);
 }

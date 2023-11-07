@@ -1,9 +1,16 @@
-.week-container {
-	max-width: 800px; /* Adjust the max width as needed */
-	margin: 0 auto; /* Center the container horizontally */
+/* Week Display white background*/
+.centered-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-width: 1480px;
+	width: auto;
+	margin-top: 80px;
+	margin-bottom: 50px;
 }
-
+/* Week Display white week cards*/
 .day.card {
-	height: 200px;
-	width: 200px;
+	height: 140px;
+	width: 190px;
+
 }
