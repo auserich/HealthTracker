@@ -16,7 +16,6 @@ const WaterDashboard = () => {
 		<>
 			<Navbar></Navbar>
 			<WeekDisplay />
-			<WaterLog />
 		</>
 	);
 };

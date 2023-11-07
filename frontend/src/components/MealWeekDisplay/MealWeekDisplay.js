@@ -180,21 +180,13 @@ const MealWeekDisplay = () => {
 				Authorization: "Bearer " + localStorage.getItem("jwtToken"),
 			},
 		})
-			.then((response) => {
-				if (response.ok) {
-					// The meal log was successfully deleted on the server.
-					// Implement logic to update your meal logs state as needed.
-					window.location.reload();
-				} else {
-					// Handle errors when the DELETE request fails
-					console.error(
-						"Error deleting meal log:",
-						response.statusText
-					);
-				}
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Meal data deleted: ", data);
+				handleAddMealSubmit(); // close the modal after successful update
 			})
 			.catch((error) => {
-				console.error("Error deleting meal log:", error);
+				console.error("Error deleting meal log: ", error);
 			});
 	};
 
@@ -212,13 +204,13 @@ const MealWeekDisplay = () => {
 		const date = day.format("D");
 
 		const data = mealLogs[i];
+
+		// Sum up the calories for all meals on this day
 		const calories = data
 			? data.reduce((acc, meal) => acc + meal.calories, 0)
-			: 0; // Sum up the calories for all meals on this day
+			: 0;
 
 		totalCaloriesByDay[i] = calories; // Store the total calories for the day
-		// const mealName = data ? data.name : "No Meal";
-		// const mealType = data ? data.mealType : "N/A";
 		const mealName = data
 			? data.map((meal) => meal.name).join(", ")
 			: "No Meal";
@@ -280,6 +272,7 @@ const MealWeekDisplay = () => {
 											<Col>{mealLog.calories}</Col>
 											<Col>
 												<Button
+													className="me-2"
 													onClick={() =>
 														handleEditMealLog(
 															mealLog
@@ -294,6 +287,7 @@ const MealWeekDisplay = () => {
 															mealLog.id
 														)
 													}
+													variant="danger"
 												>
 													Remove
 												</Button>
@@ -303,7 +297,7 @@ const MealWeekDisplay = () => {
 								))
 							) : (
 								<ListGroup.Item as="li">
-									No Meals Logged for this Day
+									No meals logged for this Day
 								</ListGroup.Item>
 							)}
 						</ListGroup>
@@ -313,14 +307,10 @@ const MealWeekDisplay = () => {
 		});
 	};
 
-	const handleNavigateToMain = () => {
-		navigate("/main");
-	};
-
 	return (
 		<>
 			<Card className="centered-container week-display">
-				<Card.Title>Week Display</Card.Title>
+				<Card.Title>Meal Logs for Week</Card.Title>
 				<Form>
 					<Form.Group className="mb-3">
 						<Form.Label>Choose a Week</Form.Label>
@@ -333,16 +323,17 @@ const MealWeekDisplay = () => {
 					</Form.Group>
 				</Form>
 				<Row className="week-container">{days}</Row>
-				<Button onClick={openAddMealModal}>Add Meal</Button>
+				<Button onClick={openAddMealModal} className="custom-button">
+					Add Meal
+				</Button>
 
-				{/* Use react-bootstrap Modal to display Meal component as a modal */}
 				<Modal
 					show={showAddMeal}
 					onHide={closeAddMealModal}
 					backdrop="static"
 				>
 					<Modal.Header closeButton>
-						<Modal.Title>
+						<Modal.Title className="text-center">
 							{editMode ? "Edit Meal" : "Add Meal"}
 						</Modal.Title>
 					</Modal.Header>
