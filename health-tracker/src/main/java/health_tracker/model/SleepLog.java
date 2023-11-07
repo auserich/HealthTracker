@@ -20,7 +20,7 @@ public class SleepLog implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name = "ounces", nullable = false)
+	@Column(name = "minutes", nullable = false)
 	private Integer minutes;
 	
 	@Column(nullable = false)

@@ -73,4 +73,10 @@ public class MealController {
 		Meal deleted = service.deleteMealById(id);
 		return ResponseEntity.status(200).body(deleted);
 	}
+	
+	@GetMapping("meal/calories/{userId}/{date}")
+	public ResponseEntity<?> getCaloriesFromDate(@PathVariable int userId, @PathVariable String date) {
+		int found = service.getCalorieDay(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
 }

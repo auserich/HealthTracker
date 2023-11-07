@@ -72,4 +72,10 @@ public class SleepLogController {
 		SleepLog deleted = service.deleteSleepLogById(id);
 		return ResponseEntity.status(200).body(deleted);
 	}
+	
+	@GetMapping("sleep/{userId}/{date}")
+	public ResponseEntity<?> getMinutesFromDate(@PathVariable int userId, @PathVariable String date) {
+		int found = service.getMinuteDay(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
 }

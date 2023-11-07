@@ -71,4 +71,10 @@ public class WaterLogController {
 		WaterLog deleted = service.deleteWaterLogById(id);
 		return ResponseEntity.status(200).body(deleted);
 	}
+	
+	@GetMapping("water/ounces/{userId}/{date}")
+	public ResponseEntity<?> getWaterFromDate(@PathVariable int userId, @PathVariable String date) {
+		int found = service.getWaterDay(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
 }

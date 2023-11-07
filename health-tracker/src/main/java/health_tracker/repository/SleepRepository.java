@@ -1,6 +1,8 @@
 package health_tracker.repository;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,4 +24,7 @@ public interface SleepRepository extends JpaRepository<SleepLog, Integer> {
             "GROUP BY s.date", nativeQuery = true)
 	
 	List<SleepLog> getAllUserSleepLogs(@Param("date") String date, @Param("userId") int userID);
+	
+	@Query(value = "SELECT SUM(minutes) as dayMinutes FROM sleep_log WHERE id = ?1 AND date = ?2", nativeQuery = true)
+	public Optional<Integer> getMinuteDay(int userId, String date);
 }
