@@ -3,6 +3,7 @@ import WaterLog from "../WaterLog/WaterLog";
 import WeekDisplay from "../WeekDisplay/WeekDisplay";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import { Navbar } from "../Navbar/Navbar";
 
 const WaterDashboard = () => {
 	const navigate = useNavigate();
@@ -13,11 +14,9 @@ const WaterDashboard = () => {
 
 	return (
 		<>
-			<h3>Water Dashboard</h3>
-
+			<Navbar></Navbar>
 			<WeekDisplay />
 			<WaterLog />
-			<Button onClick={handleNavigateToMain}>Back To Dashboard</Button>
 		</>
 	);
 };
