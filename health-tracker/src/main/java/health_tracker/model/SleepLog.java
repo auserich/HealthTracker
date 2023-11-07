@@ -1,7 +1,6 @@
 package health_tracker.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +19,7 @@ public class SleepLog implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name = "ounces", nullable = false)
+	@Column(name = "Minutes", nullable = false)
 	private Integer minutes;
 	
 	@Column(nullable = false)
@@ -73,6 +72,4 @@ public class SleepLog implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-
 }
