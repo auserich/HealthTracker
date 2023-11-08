@@ -1,5 +1,8 @@
 package health_tracker.model;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,78 +15,91 @@ import javax.validation.constraints.Positive;
 
 
 @Entity
-public class Exercise {
+public class Exercise implements Serializable{
 
-	
+	private static final long serialVersionUID = 1L;
+
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	 private Long id;
+	 private Integer id;
 	
 		@NotBlank
 	    private String name;
 		
 		@Positive
-	    private int minutes;
+	    private Integer minutes;
 		
 		@Positive
-	    private int caloriesBurned;
+	    private Integer caloriesBurned;
+
+		@Column(nullable = false)
+		private String date;
 		
-		
-		 @ManyToOne
-		    @JoinColumn(name = "user_id") // This is the foreign key in Exercise table
-		    private User user;
+		@ManyToOne
+		@JoinColumn(name = "user_id") // This is the foreign key in Exercise table
+		private User user;
+
 	    public Exercise() {
 	        // Default constructor
+			super();
 	    }
 
-	    public Exercise(Long id, String name, int minutes, int caloriesBurned) {
+	    public Exercise(Integer id, String name, Integer minutes, Integer caloriesBurned, String date, User user) {
 			super();
 			this.id = id;
 			this.name = name;
 			this.minutes = minutes;
 			this.caloriesBurned = caloriesBurned;
+			this.date = date;
+			this.user = user;
 		}
 
-
-		public Long getId() {
+		public Integer getId() {
 			return id;
 		}
 
-
-		public void setId(Long id) {
+		public void setId(Integer id) {
 			this.id = id;
 		}
-
 
 		public String getName() {
 			return name;
 		}
 
-
 		public void setName(String name) {
 			this.name = name;
 		}
 
-
-		public int getMinutes() {
+		public Integer getMinutes() {
 			return minutes;
 		}
-
 
 		public void setMinutes(int minutes) {
 			this.minutes = minutes;
 		}
 
-
-		public int getCaloriesBurned() {
+		public Integer getCaloriesBurned() {
 			return caloriesBurned;
 		}
-
 
 		public void setCaloriesBurned(int caloriesBurned) {
 			this.caloriesBurned = caloriesBurned;
 		}
-	    
-	    
-	    
+
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
+		}
+
+		public User getUser() {
+			return user;
+		}
+
+		public void setUser(User user) {
+			this.user = user;
+		}
+
 }

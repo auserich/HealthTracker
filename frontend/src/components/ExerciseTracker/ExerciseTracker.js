@@ -1,149 +1,180 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Navbar } from "../Navbar/Navbar";
+import {Form, Button} from "react-bootstrap";
 
-const jwtToken = localStorage.getItem("jwtToken");
+const Exercise = (props) => {
+	const [exerciseName, setName] = useState("");
+	const [exerciseMinutes, setMinutes] = useState("");
+	const [exerciseCaloriesBurned, setCaloriesBurned] = useState("");
 
-function ExerciseTracker() {
-	const navigate = useNavigate();
-	const [successMessage, setSuccessMessage] = useState("");
-	const [exerciseData, setExerciseData] = useState({
-		exercise: "",
-		minutes: 0,
-		caloriesBurned: 0,
-	});
-	const [exerciseList, setExerciseList] = useState([]);
+	const [exerciseDate, setDate] = useState("");
+	const [exerciseId, setId] = useState("");
 
-	const userId = localStorage.getItem("userId");
-	console.log("userID for the logged in user", userId);
-
-	const handleInputChange = (e) => {
-		const { name, value } = e.target;
-		setExerciseData({
-			...exerciseData,
-			[name]: value,
-		});
-	};
-
-	const handleAddExercise = () => {
-		const exerciseToAdd = {
-			name: exerciseData.exercise,
-			minutes: exerciseData.minutes,
-			caloriesBurned: exerciseData.caloriesBurned,
-			user_id: userId,
-		};
-		console.log("excercise added", exerciseToAdd);
-
-		axios
-			.post("http://localhost:8080/api/exercises", exerciseToAdd, {
-				headers: {
-					Authorization: `Bearer ${jwtToken}`,
-					"Content-Type": "application/json",
-				},
-			})
-			.then((response) => {
-				setSuccessMessage("Exercise added successfully");
-				setTimeout(() => {
-					setSuccessMessage("");
-				}, 3000);
-				setExerciseList([...exerciseList, response.data]);
-			})
-			.catch((error) => {
-				console.error("Error adding exercise:", error);
-			});
-
-		setExerciseData({
-			exercise: "",
-			minutes: 0,
-			caloriesBurned: 0,
-		});
-	};
-
-	const handleGoToDashboard = () => {
-		navigate("/main");
-	};
 
 	useEffect(() => {
-		axios
-			.get("http://localhost:8080/api/exercises/user-exercises", {
-				headers: {
-					Authorization: `Bearer ${jwtToken}`,
-				},
-			})
-			.then((response) => {
-				setExerciseList(response.data);
+		if (props.editMode && props.exerciseData) {
+			if (props.exerciseData.name) {
+				setName(props.exerciseData.name);
+			}
+			if (props.exerciseData.minutes) {
+				setMinutes(props.exerciseData.minutes);
+			}
+			if (props.exerciseData.caloriesBurned) {
+				setCaloriesBurned(props.exerciseData.caloriesBurned);
+			}
+			if (props.exerciseData.date) {
+				setDate(props.exerciseData.date);
+			}
+			if (props.exerciseData.id) {
+				setId(props.exerciseData.id);
+			}
+		}
+	}, [props.editMode, props.exerciseData]);
+
+	const handleNameChange = (e) => {
+		setName(e.target.value);
+	};
+
+	const handleMinutesChange = (e) => {
+		setMinutes(e.target.value);
+	};
+
+	const handleCaloriesBurnedChange = (e) => {
+		setCaloriesBurned(e.target.value);
+	};
+
+	const handleDateChange = (e) => {
+		setDate(e.target.value);
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		// Check if mealName is null before proceeding
+		if (exerciseName === null) {
+			console.error("Name is null. State might not be updated yet.");
+			return;
+		}
+
+		const minutes = parseInt(exerciseMinutes, 10);
+		const caloriesBurned = parseInt(exerciseCaloriesBurned, 10);
+
+		if (isNaN(minutes)) {
+			console.error("Invalid input for minutes exercised");
+			return;
+		}
+
+		if (isNaN(caloriesBurned)) {
+			console.error("Invalid input for calories burned");
+			return;
+		}
+
+		const exerciseData = {
+			id: exerciseId,
+			name: exerciseName,
+			exerciseMinutes: exerciseMinutes,
+			caloriesBurned: exerciseCaloriesBurned,
+			date: exerciseDate,
+		};
+
+		if (props.editMode) {
+			// If in "edit" mode, update the data
+			console.log("UPDATING: ", exerciseData);
+			editExerciseLog(exerciseData);
+		} else {
+			// Default to POST request
+			console.log("ADDING: ", exerciseData);
+			addExerciseLog(exerciseData);
+		}
+	};
+
+	const addExerciseLog = (exerciseData) => {
+		fetch("http://localhost:8080/api/exercise", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+			},
+			body: JSON.stringify(exerciseData),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Data saved: ", data);
+				props.handleClose(); // Close the modal after successful submission
 			})
 			.catch((error) => {
-				console.error("Error retrieving user exercises:", error);
+				console.error("Error: ", error);
 			});
-	}, []);
+	};
+
+	const editExerciseLog = (exerciseData) => {
+		fetch(`http://localhost:8080/api/exercise`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+			},
+			body: JSON.stringify(exerciseData),
+		})
+			.then(console.log("have I crashed yet"))
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(" data updated: ", data);
+				props.handleClose(); // Close the modal after successful update
+			})
+			.catch((error) => {
+				console.error("Error: ", error);
+			});
+	};
 
 	return (
 		<>
-			<Navbar></Navbar>
-			<div>
-				<h1>Exercise Tracker</h1>
-				<form>
-					<div>
-						<label>Exercise:</label>
-						<input
-							type="text"
-							name="exercise"
-							value={exerciseData.exercise}
-							onChange={handleInputChange}
-						/>
-					</div>
-					<div>
-						<label>Minutes:</label>
-						<input
-							type="number"
-							name="minutes"
-							value={exerciseData.minutes}
-							onChange={handleInputChange}
-						/>
-					</div>
-					<div>
-						<label>Calories Burned:</label>
-						<input
-							type="number"
-							name="caloriesBurned"
-							value={exerciseData.caloriesBurned}
-							onChange={handleInputChange}
-						/>
-					</div>
-					<button type="button" onClick={handleAddExercise}>
-						Add Exercise
-					</button>
-				</form>
-				<div>
-					<h2>Exercise List</h2>
-					<ul>
-						{exerciseList.map((exercise, index) => (
-							<li key={index}>
-								Exercise: {exercise.name}, {exercise.minutes}{" "}
-								minutes, {exercise.caloriesBurned} calories
-								burned
-							</li>
-						))}
-					</ul>
-				</div>
-
-				<button type="button" onClick={handleGoToDashboard}>
-					Go to Dashboard
-				</button>
-
-				<ul>
-					{exerciseList.map((exercise, index) => (
-						<li key={index}>
-							Exercise: {exercise.name}, {exercise.minutes}{" "}
-							minutes, {exercise.caloriesBurned} calories burned
-						</li>
-					))}
-				</ul>
-			</div>
+			<Form onSubmit={handleSubmit}>
+				<Form.Group className="mb-3">
+					<Form.Label>Name</Form.Label>
+					<Form.Control
+						type="text"
+						placeholder="Enter workout name"
+						value={exerciseName}
+						onChange={handleNameChange}
+					/>
+				</Form.Group>
+				<Form.Group className="mb-3">
+					<Form.Label>Minutes Active</Form.Label>
+					<Form.Control
+						type="number"
+						placeholder="Enter minutes"
+						value={exerciseMinutes}
+						onChange={handleMinutesChange}
+					/>
+				</Form.Group>
+				<Form.Group className="mb-3">
+					<Form.Label>Estimated Calories Burned</Form.Label>
+					<Form.Control
+						type="number"
+						placeholder="Enter minutes"
+						value={exerciseCaloriesBurned}
+						onChange={handleCaloriesBurnedChange}
+					/>
+				</Form.Group>
+				<Form.Group className="mb-3">
+					<Form.Label>Date</Form.Label>
+					<Form.Control
+						type="date"
+						placeholder="Enter date"
+						value={exerciseDate}
+						onChange={handleDateChange}
+					/>
+				</Form.Group>
+				<Button
+					variant="primary"
+					type="submit"
+					className="mx-auto d-block"
+				>
+					{props.editMode ? "Update" : "Submit"}
+				</Button>
+			</Form>
 		</>
 	);
-}
+};
 
-export default ExerciseTracker;
+export default Exercise;
