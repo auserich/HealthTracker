@@ -4,12 +4,13 @@ import { Card, Form, Button, Modal } from "react-bootstrap";
 const Meal = (props) => {
 	const [mealName, setName] = useState("");
 	const [mealCalories, setCalories] = useState("");
-	const [mealType, setType] = useState("");
+
 	const [mealDate, setDate] = useState("");
 	const [mealId, setId] = useState("");
+	const mealTypeOptions = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
+	const [mealType, setType] = useState(mealTypeOptions[0]);
 
 	useEffect(() => {
-		console.log("edit mode enabled!");
 		if (props.editMode && props.mealData) {
 			if (props.mealData.name) {
 				setName(props.mealData.name);
@@ -38,7 +39,7 @@ const Meal = (props) => {
 	};
 
 	const handleTypeChange = (e) => {
-		setType(e.target.value.toUpperCase());
+		setType(e.target.value);
 	};
 
 	const handleDateChange = (e) => {
@@ -62,65 +63,61 @@ const Meal = (props) => {
 		}
 
 		const mealData = {
+			id: mealId,
 			name: mealName,
 			calories: mealCalories,
 			mealType: mealType,
 			date: mealDate,
-			id: mealId,
 		};
 
 		if (props.editMode) {
 			// If in "edit" mode, update the meal data
-			mealData.id = props.mealData.id; // Include the meal ID for the PUT request
-			console.log("I'm gonna PUT this: ", mealData);
-
-			console.log("mealName:", mealName);
-			console.log("mealCalories:", mealCalories);
-			console.log("mealType:", mealType);
-			console.log("mealDate:", mealDate);
-			console.log("mealId:", mealId);
-
-			fetch(`http://localhost:8080/api/meal`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + localStorage.getItem("jwtToken"),
-				},
-				body: JSON.stringify(mealData),
-			})
-				.then(console.log("have I crashed yet"))
-				.then((response) => response.json())
-				.then((data) => {
-					console.log("Meal data updated: ", data);
-					props.handleClose(); // Close the modal after successful update
-				})
-				.catch((error) => {
-					console.error("Error: ", error);
-				});
+			console.log("UPDATING: ", mealData);
+			editMealLog(mealData);
 		} else {
-			console.log("name: ", mealName);
-			console.log("calories: ", mealCalories);
-			console.log("type: ", mealType);
-			console.log("date: ", mealDate);
-
-			console.log("I'm gonna POST this: ", mealData);
-			fetch("http://localhost:8080/api/meal", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + localStorage.getItem("jwtToken"),
-				},
-				body: JSON.stringify(mealData),
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					console.log("Data saved: ", data);
-					props.handleClose(); // Close the modal after successful submission
-				})
-				.catch((error) => {
-					console.error("Error: ", error);
-				});
+			// Default to POST request
+			console.log("ADDING: ", mealData);
+			addMealLog(mealData);
 		}
+	};
+
+	const addMealLog = (mealData) => {
+		fetch("http://localhost:8080/api/meal", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+			},
+			body: JSON.stringify(mealData),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Data saved: ", data);
+				props.handleClose(); // Close the modal after successful submission
+			})
+			.catch((error) => {
+				console.error("Error: ", error);
+			});
+	};
+
+	const editMealLog = (mealData) => {
+		fetch(`http://localhost:8080/api/meal`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + localStorage.getItem("jwtToken"),
+			},
+			body: JSON.stringify(mealData),
+		})
+			.then(console.log("have I crashed yet"))
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Meal data updated: ", data);
+				props.handleClose(); // Close the modal after successful update
+			})
+			.catch((error) => {
+				console.error("Error: ", error);
+			});
 	};
 
 	return (
@@ -147,11 +144,16 @@ const Meal = (props) => {
 				<Form.Group className="mb-3">
 					<Form.Label>Type</Form.Label>
 					<Form.Control
-						type="text"
-						placeholder="Enter type"
+						as="select"
 						value={mealType}
 						onChange={handleTypeChange}
-					/>
+					>
+						{mealTypeOptions.map((option) => (
+							<option key={option} value={option}>
+								{option}
+							</option>
+						))}
+					</Form.Control>
 				</Form.Group>
 				<Form.Group className="mb-3">
 					<Form.Label>Date</Form.Label>
@@ -162,8 +164,12 @@ const Meal = (props) => {
 						onChange={handleDateChange}
 					/>
 				</Form.Group>
-				<Button variant="primary" type="submit">
-					{props.editMode ? "Save Changes" : "Submit"}
+				<Button
+					variant="primary"
+					type="submit"
+					className="mx-auto d-block"
+				>
+					{props.editMode ? "Update" : "Submit"}
 				</Button>
 			</Form>
 		</>
