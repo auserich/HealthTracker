@@ -20,7 +20,6 @@ public class SleepLog implements Serializable {
 	private Integer id;
 	
 	@Column(name = "Minutes", nullable = false)
-	@Column(name = "minutes", nullable = false)
 	private Integer minutes;
 	
 	@Column(nullable = false)
