@@ -1,6 +1,7 @@
 package health_tracker.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,7 @@ public interface WaterRepository extends JpaRepository<WaterLog, Integer> {
             "AND w.date < DATE_ADD(:date, INTERVAL 7 - DAYOFWEEK(:date) DAY) " +
             "GROUP BY w.date", nativeQuery = true)
 	List<WaterLog> getAllUserWaterLogs(@Param("date") String date, @Param("userId") int userId);
+	
+	@Query(value = "SELECT SUM(ounces) as dayOunces FROM water_log WHERE user_id = ?1 AND date = ?2", nativeQuery = true)
+	public Optional<Integer> getWaterDay(int userId, String date);
 }

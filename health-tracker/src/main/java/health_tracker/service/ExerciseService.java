@@ -19,31 +19,51 @@ public class ExerciseService {
     ExerciseRepository repo;
 
     public List<Exercise> getAllExercises() {
-		return repo.findAll();
-	}
+		    return repo.findAll();
+	  }
 	
-	public List<Exercise> getAllUserExercises(int userId) {
-		return repo.getAllUserExercises(userId);
-	}
+	  public List<Exercise> getAllUserExercises(int userId) {
+		    return repo.getAllUserExercises(userId);
+	  }
 	
-	public List<Exercise> getAllUserExercisesFromDate(int userId, String date) {
-		return repo.getAllUserExercisesFromDate(userId, date);
-	}
+	  public List<Exercise> getAllUserExercisesFromDate(int userId, String date) {
+		    return repo.getAllUserExercisesFromDate(userId, date);
+    }
+  
+    public int getCalorieDay(int userId,String date) {
+		    Optional<Integer> result = exerciseRepository.getCalorieDay(userId, date);
+		
+		    if(!result.isEmpty()) {
+			    return result.get();
+		    } else {
+			    return 0;
+		    }
+	  }
+    
+    public int getMinuteDay(int userId,String date) {
+		    Optional<Integer> result = exerciseRepository.getMinuteDay(userId, date);
+		
+		    if(!result.isEmpty()) {
+			    return result.get();
+		    } else {
+			    return 0;
+		    }
+    }
 	
     public Exercise createExercise(Exercise exercise, User user) {
-		exercise.setId(null);
-		Exercise created = new Exercise(null, exercise.getName(), exercise.getMinutes(), exercise.getCaloriesBurned(), exercise.getDate(), user );
-		return repo.save(created);
-	}
+		    exercise.setId(null);
+		    Exercise created = new Exercise(null, exercise.getName(), exercise.getMinutes(), exercise.getCaloriesBurned(), exercise.getDate(), user );
+		    return repo.save(created);
+	  }
 
     public Exercise updateExercise(Exercise exercise, User user) throws ResourceNotFoundException {
-		if (repo.existsById(exercise.getId())) {
-			exercise.setUser(user);
-			return repo.save(exercise);
-		}
+		    if (repo.existsById(exercise.getId())) {
+			      exercise.setUser(user);
+			  return repo.save(exercise);
+        }
 		
-		return repo.save(new Exercise(null, exercise.getName(), exercise.getMinutes(), exercise.getCaloriesBurned(), exercise.getDate(), user ));
-	}
+		    return repo.save(new Exercise(null, exercise.getName(), exercise.getMinutes(), exercise.getCaloriesBurned(), exercise.getDate(), user ));
+	  }
 
     public Exercise deleteExerciseById(int id) throws ResourceNotFoundException {
         Optional<Exercise> found = repo.findById(id);
@@ -55,7 +75,4 @@ public class ExerciseService {
         repo.deleteById(id);
         return found.get();
     }
-
-
 }
-

@@ -1,7 +1,6 @@
 package health_tracker.model;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,56 +11,66 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
-
-
 @Entity
 public class Exercise implements Serializable{
+    private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
-
-	@Id
+	  @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	 private Integer id;
+	  private Integer id;
 	
+		@Column
 		@NotBlank
-	    private String name;
+	  private String name;
 		
+		@Column
 		@Positive
-	    private Integer minutes;
+	  private Integer minutes;
 		
+		@Column
 		@Positive
-	    private Integer caloriesBurned;
+	  private Integer caloriesBurned;
+		
+		@Column(nullable = false)
+		private String date;
+	  
+		@ManyToOne
+	  @JoinColumn(name = "user_id") // This is the foreign key in Exercise table
+	  private User user;
 
 		@Column(nullable = false)
 		private String date;
-		
-		@ManyToOne
-		@JoinColumn(name = "user_id") // This is the foreign key in Exercise table
-		private User user;
 
-	    public Exercise() {
-	        // Default constructor
-			super();
-	    }
+	  public Exercise() {
+	    super();
+	  }
 
-	    public Exercise(Integer id, String name, Integer minutes, Integer caloriesBurned, String date, User user) {
-			super();
-			this.id = id;
-			this.name = name;
-			this.minutes = minutes;
-			this.caloriesBurned = caloriesBurned;
-			this.date = date;
-			this.user = user;
+	  public Exercise(Integer id, String name, Integer minutes, Integer caloriesBurned, String date, User user) {
+			  super();
+			  this.id = id;
+			  this.name = name;
+			  this.minutes = minutes;
+			  this.caloriesBurned = caloriesBurned;
+			  this.date = date;
+			  this.user = user;
 		}
 
 		public Integer getId() {
 			return id;
 		}
-
-		public void setId(Integer id) {
+  
+    public void setId(Integer id) {
 			this.id = id;
 		}
 
+		public String getDate() {
+			return date;
+		}
+
+		public void setDate(String date) {
+			this.date = date;
+		}
+  
 		public String getName() {
 			return name;
 		}
@@ -74,7 +83,7 @@ public class Exercise implements Serializable{
 			return minutes;
 		}
 
-		public void setMinutes(int minutes) {
+		public void setMinutes(Integer minutes) {
 			this.minutes = minutes;
 		}
 
@@ -82,7 +91,7 @@ public class Exercise implements Serializable{
 			return caloriesBurned;
 		}
 
-		public void setCaloriesBurned(int caloriesBurned) {
+		public void setCaloriesBurned(Integer caloriesBurned) {
 			this.caloriesBurned = caloriesBurned;
 		}
 
@@ -101,5 +110,4 @@ public class Exercise implements Serializable{
 		public void setUser(User user) {
 			this.user = user;
 		}
-
 }
