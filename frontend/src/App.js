@@ -9,7 +9,7 @@ import SleepLog from "./components/SleepLog/SleepLog";
 import WeekDisplay from "./components/WeekDisplay/WeekDisplay";
 import WaterDashboard from "./components/WaterDashboard/WaterDashboard";
 import SleepDashboard from "./components/SleepDashboard/SleepDashboard";
-import ExerciseTracker from "./components/ExerciseTracker/ExerciseTracker";
+import ExerciseDashBoard from "./components/ExerciseDashboard/Dashboard";
 import Meal from "./components/Meal/Meal";
 import MealDashboard from "./components/MealDashboard/MealDashboard";
 import MainDashboard from "./components/MainDashboard/MainDashboard";
@@ -22,7 +22,7 @@ function App() {
 				<Route path="/" element={<Landing />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<Signup />} />
-				<Route path="/exercise-tracker" element={<ExerciseTracker />} />
+				<Route path="/exercise-tracker" element={<ExerciseDashBoard />} />
 				<Route path="/water" element={<WaterDashboard />} />
 				<Route path="/sleep" element={<SleepDashboard />} />
 				<Route path="/meal" element={<MealDashboard />} />
