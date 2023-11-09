@@ -62,4 +62,14 @@ public class SleepLogService {
 		repo.deleteById(id);
 		return found.get();
 	}
+	
+	public int getMinuteDay(int userId,String date) {
+		Optional<Integer> result = repo.getMinuteDay(userId, date);
+		
+		if(!result.isEmpty()) {
+			return result.get();
+		} else {
+			return 0;
+		}
+	}
 }

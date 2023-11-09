@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import health_tracker.exception.ResourceNotFoundException;
 import health_tracker.model.Meal;
@@ -53,5 +54,15 @@ public class MealService {
 		
 		repo.deleteById(id);
 		return found.get();
+	}
+	
+	public int getCalorieDay(int userId,String date) {
+		Optional<Integer> result = repo.getCalorieDay(userId, date);
+		
+		if(!result.isEmpty()) {
+			return result.get();
+		} else {
+			return 0;
+		}
 	}
 }

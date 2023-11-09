@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,10 +26,21 @@ import health_tracker.service.UserService;
 public class ExerciseController {
     @Autowired
     ExerciseService service;
-
-    @Autowired
+  
     UserService userService;
-
+    
+    @GetMapping("user-exercises/calories/{userId}/{date}")
+	public ResponseEntity<?> getCalorieFromDate(@PathVariable int userId, @PathVariable String date) {
+    int found = service.getCalorieDay(userId, date);
+    	return ResponseEntity.status(200).body(found);
+	}
+    
+    @GetMapping("user-exercises/minutes/{userId}/{date}")
+	public ResponseEntity<?> getMinuteFromDate(@PathVariable int userId, @PathVariable String date) {
+    	int found = service.getMinuteDay(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
+  
     @GetMapping("/exercise")
 	public List<Exercise> getAllExercises() {
 		return service.getAllExercises();
@@ -72,5 +82,5 @@ public class ExerciseController {
 	public ResponseEntity<?> deleteExercise(@PathVariable int id) throws ResourceNotFoundException {
 		Exercise deleted = service.deleteExerciseById(id);
 		return ResponseEntity.status(200).body(deleted);
-	}
+    }
 }

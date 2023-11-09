@@ -24,16 +24,11 @@ const MainDashboard = () => {
               } catch (error) {
                 console.error('Error:', error);
               }
+
         }
 
-        const getWater = async () => {
-            try {
-                const response = await axiosInstance.get('/thread');
-                return response.data;
-              } catch (error) {
-                console.error('Error:', error);
-              }
-        }
+        
+
       });
       
 
@@ -93,7 +88,7 @@ const MainDashboard = () => {
 
                 <div className="widget" onClick={navSleep}>
                     <h1>Sleep Log</h1>
-                    <p>Hours Slept Last Night: [ph]</p>
+                    <p>Hours Slept Most Recently: [ph]</p>
                     <p>Sleep Goal: [ph]</p>
 
                     <div className="graph">

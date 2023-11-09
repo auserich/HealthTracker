@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import health_tracker.exception.ResourceNotFoundException;
 import health_tracker.model.User;
 import health_tracker.model.Exercise;
-import health_tracker.model.Meal;
 import health_tracker.repository.ExerciseRepository;
 
 @Service
@@ -19,7 +18,7 @@ public class ExerciseService {
     ExerciseRepository repo;
 
     public List<Exercise> getAllExercises() {
-		return repo.findAll();
+    	return repo.findAll();
 	}
 	
 	public List<Exercise> getAllUserExercises(int userId) {
@@ -28,19 +27,39 @@ public class ExerciseService {
 	
 	public List<Exercise> getAllUserExercisesFromDate(int userId, String date) {
 		return repo.getAllUserExercisesFromDate(userId, date);
+    }
+  
+    public int getCalorieDay(int userId,String date) {
+		Optional<Integer> result = repo.getCalorieDay(userId, date);
+		
+		if(!result.isEmpty()) {
+			return result.get();
+		} else {
+			return 0;
+		}
 	}
+    
+    public int getMinuteDay(int userId,String date) {
+		Optional<Integer> result = repo.getMinuteDay(userId, date);
+		
+		if(!result.isEmpty()) {
+			return result.get();
+		} else {
+			return 0;
+		}
+    }
 	
     public Exercise createExercise(Exercise exercise, User user) {
 		exercise.setId(null);
 		Exercise created = new Exercise(null, exercise.getName(), exercise.getMinutes(), exercise.getCaloriesBurned(), exercise.getDate(), user );
 		return repo.save(created);
-	}
+    }
 
     public Exercise updateExercise(Exercise exercise, User user) throws ResourceNotFoundException {
 		if (repo.existsById(exercise.getId())) {
 			exercise.setUser(user);
 			return repo.save(exercise);
-		}
+        }
 		
 		return repo.save(new Exercise(null, exercise.getName(), exercise.getMinutes(), exercise.getCaloriesBurned(), exercise.getDate(), user ));
 	}
@@ -55,7 +74,4 @@ public class ExerciseService {
         repo.deleteById(id);
         return found.get();
     }
-
-
 }
-
