@@ -15,7 +15,6 @@ import health_tracker.model.Exercise;
 import health_tracker.repository.ExerciseRepository;
 import health_tracker.service.ExerciseService;
 
-
 @RestController
 @RequestMapping("/api/exercises")
 public class ExerciseController {

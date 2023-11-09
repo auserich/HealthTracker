@@ -13,6 +13,7 @@ import ExerciseTracker from "./components/ExerciseTracker/ExerciseTracker";
 import Meal from "./components/Meal/Meal";
 import MealDashboard from "./components/MealDashboard/MealDashboard";
 import MainDashboard from "./components/MainDashboard/MainDashboard";
+import Profile from "./components/Profile/Profile";
 
 function App() {
 	return (
@@ -26,6 +27,7 @@ function App() {
 				<Route path="/sleep" element={<SleepDashboard />} />
 				<Route path="/meal" element={<MealDashboard />} />
 				<Route path="/main" element={<MainDashboard />} />
+				<Route path="/profile" element={<Profile />} />
 			</Routes>
 		</div>
 	);
