@@ -44,7 +44,6 @@ public class SecurityConfiguration {
 		http.cors().and().csrf().disable()
 			.authorizeRequests()
 			.antMatchers("/authenticate").permitAll()	// let anyone try to create a token
-			.antMatchers("/api/hello").hasRole("USER")
 			.antMatchers("/api/admin").hasRole("ADMIN")
 			//.antMatchers(HttpMethod.GET, "/api/user").hasRole("ADMIN") // don't want just anyone to be able to get all user info
 			.antMatchers("/api/all").permitAll()
