@@ -5,29 +5,88 @@ import axios from 'axios';
 
 const MainDashboard = () => {
 
-    const [user,setUser] = useState([]);
     const [username,setUsername] = useState([]);
+    const [currCal,setCal] = useState([]);
+    const [currWater,setWater] = useState([]);
+    const [currMin,setMin] = useState([]);
+    const [currBurn,setBurn] = useState([]);
+    const [currSleep,setSleep] = useState([]);
     const navigate = useNavigate();
 
     const axiosInstance = axios.create({
         baseURL: 'http://localhost:8080',
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`
+        }
       });
 
     useEffect( () => {
         setUsername(localStorage.getItem("username"));
-        //load user info for food, water, exercise, and sleep
+
+        const currDate = new Date().toJSON().slice(0,10);
 
         const getUser = async () => {
             try {
                 const response = await axiosInstance.get('/api/user/whoami');
+                localStorage.setItem("Id", response.data.id);
                 return response.data;
+                
               } catch (error) {
                 console.error('Error:', error);
               }
 
         }
 
-        
+        const getCalorie = async () => {
+            try {
+                const response = await axiosInstance.get(`/api/meal/calories/${localStorage.getItem("Id")}/${currDate}`);
+                setCal(response.data);
+                return response.data;                
+              } catch (error) {
+                console.error('Error:', error);
+              }
+
+        }
+
+        const getWater = async () => {
+            try {
+                const response = await axiosInstance.get(`/api/water/ounces/${localStorage.getItem("Id")}/${currDate}`);
+                setWater(response.data);
+                return response.data;                
+              } catch (error) {
+                console.error('Error:', error);
+              }
+
+        }
+
+        const getExercise = async () => {
+            try {
+                const response = await axiosInstance.get(`/api/user-exercises/minutes/${localStorage.getItem("Id")}/${currDate}`);
+                setMin(response.data);
+
+                const response2 = await axiosInstance.get(`/api/user-exercises/calories/${localStorage.getItem("Id")}/${currDate}`);
+                setBurn(response2.data);
+                return response.data;                
+              } catch (error) {
+                console.error('Error:', error);
+              }
+
+        }
+
+        const getSleep = async () => {
+            var lastDate = new Date();
+            lastDate.setDate(lastDate.getDate() - 1);
+            try {
+                const response = await axiosInstance.get(`/api/sleep/total/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
+                setSleep(response.data);
+                return response.data;                
+              } catch (error) {
+                console.error('Error:', error);
+              }
+
+        }
+
+        getUser().then(getCalorie).then(getWater).then(getExercise).then(getSleep);
 
       });
       
@@ -58,8 +117,8 @@ const MainDashboard = () => {
             <div className="main-body">
                 <div className="widget" onClick={navFood}>
                     <h1>Calorie Log</h1>
-                    <p>Calories So Far: [ph]</p>
-                    <p>Calories Remaining: [ph]</p>
+                    <p>Calories Consumed Today: {currCal} Calorie(s)</p>
+                    <p>Calories Remaining Today: [ph]</p>
 
                     <div className="graph">
                         <p>[ph] bar graph of calories consumed this week</p>
@@ -68,8 +127,8 @@ const MainDashboard = () => {
 
                 <div className="widget" onClick={navWater}>
                     <h1>Water Log</h1>
-                    <p>Water So Far: [ph]</p>
-                    <p>Water Remaining: [ph]</p>
+                    <p>Water Consumed Today: {currWater} Ounce(s)</p>
+                    <p>Water Remaining Today: [ph]</p>
 
                     <div className="graph">
                         <p>[ph] bar graph of calories consumed this week</p>
@@ -78,8 +137,8 @@ const MainDashboard = () => {
 
                 <div className="widget" onClick={navExercise}>
                     <h1>Exercise Log</h1>
-                    <p>Time Spent Active: [ph]</p>
-                    <p>Calories burned: [ph]</p>
+                    <p>Time Spent Active Today: {currMin} Minute(s)</p>
+                    <p>Calories Burned Today: {currBurn} Calorie(s)</p>
 
                     <div className="graph">
                         <p>[ph] bar graph of calories consumed this week</p>
@@ -88,7 +147,7 @@ const MainDashboard = () => {
 
                 <div className="widget" onClick={navSleep}>
                     <h1>Sleep Log</h1>
-                    <p>Hours Slept Most Recently: [ph]</p>
+                    <p>Minutes Slept Most Recently: {currSleep} Minutes</p>
                     <p>Sleep Goal: [ph]</p>
 
                     <div className="graph">

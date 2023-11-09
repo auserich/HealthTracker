@@ -19,7 +19,7 @@ import health_tracker.service.ExerciseService;
 
 
 @RestController
-@RequestMapping("/api/exercises")
+@RequestMapping("/api")
 public class ExerciseController {
     @Autowired
     private ExerciseRepository exerciseRepository;
