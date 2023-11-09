@@ -30,7 +30,8 @@ public class ExerciseService {
     }
   
     public int getCalorieDay(int userId,String date) {
-		Optional<Integer> result = repo.getCalorieDay(userId, date);
+		
+      Optional<Integer> result = repo.getCalorieDay(userId, date);
 		
 		if(!result.isEmpty()) {
 			return result.get();
@@ -40,8 +41,8 @@ public class ExerciseService {
 	}
     
     public int getMinuteDay(int userId,String date) {
-		Optional<Integer> result = repo.getMinuteDay(userId, date);
-		
+		    Optional<Integer> result = repo.getMinuteDay(userId, date);
+
 		if(!result.isEmpty()) {
 			return result.get();
 		} else {
