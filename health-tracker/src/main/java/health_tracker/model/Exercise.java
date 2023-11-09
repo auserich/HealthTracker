@@ -38,9 +38,6 @@ public class Exercise implements Serializable{
 	  @JoinColumn(name = "user_id") // This is the foreign key in Exercise table
 	  private User user;
 
-		@Column(nullable = false)
-		private String date;
-
 	  public Exercise() {
 	    super();
 	  }
@@ -93,14 +90,6 @@ public class Exercise implements Serializable{
 
 		public void setCaloriesBurned(Integer caloriesBurned) {
 			this.caloriesBurned = caloriesBurned;
-		}
-
-		public String getDate() {
-			return date;
-		}
-
-		public void setDate(String date) {
-			this.date = date;
 		}
 
 		public User getUser() {

@@ -31,11 +31,11 @@ public class ExerciseController {
     UserService userService;
 
     // Endpoint to get user-specific exercises
-    @GetMapping("/user-exercises")
+   /* @GetMapping("/user-exercises")
     public List<Exercise> getUserExercises(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         return service.getExercisesByUsername(username);
-    }
+    }*/
     
     @GetMapping("user-exercises/calories/{userId}/{date}")
 	  public ResponseEntity<?> getCalorieFromDate(@PathVariable int userId, @PathVariable String date) {
