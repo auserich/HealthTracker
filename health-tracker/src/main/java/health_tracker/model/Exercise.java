@@ -15,88 +15,58 @@ import javax.validation.constraints.Positive;
 public class Exercise implements Serializable{
     private static final long serialVersionUID = 1L;
 
-	  @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	  private Integer id;
 	
-		@Column
-		@NotBlank
-	  private String name;
+	@Column
+	@NotBlank
+	private String name;
 		
-		@Column
-		@Positive
-	  private Integer minutes;
+	@Column
+	@Positive
+	private Integer minutes;
 		
-		@Column
-		@Positive
-	  private Integer caloriesBurned;
+	@Column
+	@Positive
+	private Integer caloriesBurned;
 		
-		@Column(nullable = false)
-		private String date;
+	@Column(nullable = false)
+	private String date;
 	  
-		@ManyToOne
-	  @JoinColumn(name = "user_id") // This is the foreign key in Exercise table
-	  private User user;
+	@ManyToOne
+	@JoinColumn(name = "user_id") // This is the foreign key in Exercise table
+	private User user;
 
-	  public Exercise() {
-	    super();
-	  }
+	public Exercise() {
+		super();
+	}
 
-	  public Exercise(Integer id, String name, Integer minutes, Integer caloriesBurned, String date, User user) {
-			  super();
-			  this.id = id;
-			  this.name = name;
-			  this.minutes = minutes;
-			  this.caloriesBurned = caloriesBurned;
-			  this.date = date;
-			  this.user = user;
-		}
+	public Exercise(Integer id, String name, Integer minutes, Integer caloriesBurned, String date, User user) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.minutes = minutes;
+		this.caloriesBurned = caloriesBurned;
+		this.date = date;
+		this.user = user;
+	}
 
-		public Integer getId() {
-			return id;
-		}
-  
-    public void setId(Integer id) {
-			this.id = id;
-		}
+	public Integer getId() { return id; } 
+	public void setId(Integer id) { this.id = id; } 
 
-		public String getDate() {
-			return date;
-		}
+	public String getName() { return name; } 
+	public void setName(String name) { this.name = name; } 
 
-		public void setDate(String date) {
-			this.date = date;
-		}
-  
-		public String getName() {
-			return name;
-		}
+	public Integer getMinutes() { return minutes; } 
+	public void setMinutes(Integer minutes) { this.minutes = minutes; } 
 
-		public void setName(String name) {
-			this.name = name;
-		}
+	public Integer getCaloriesBurned() { return caloriesBurned; } 
+	public void setCaloriesBurned(Integer caloriesBurned) { this.caloriesBurned = caloriesBurned; } 
 
-		public Integer getMinutes() {
-			return minutes;
-		}
+	public String getDate() { return date; } 
+	public void setDate(String date) { this.date = date; } 
 
-		public void setMinutes(Integer minutes) {
-			this.minutes = minutes;
-		}
-
-		public Integer getCaloriesBurned() {
-			return caloriesBurned;
-		}
-
-		public void setCaloriesBurned(Integer caloriesBurned) {
-			this.caloriesBurned = caloriesBurned;
-		}
-
-		public User getUser() {
-			return user;
-		}
-
-		public void setUser(User user) {
-			this.user = user;
-		}
+	public User getUser() { return user; } 
+	public void setUser(User user) { this.user = user; } 
 }

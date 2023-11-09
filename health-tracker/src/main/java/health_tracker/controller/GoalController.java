@@ -15,66 +15,55 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import health_tracker.exception.ResourceAlreadyExistsException;
 import health_tracker.exception.ResourceNotFoundException;
-import health_tracker.model.Meal;
+import health_tracker.model.Goal;
 import health_tracker.model.User;
-import health_tracker.service.MealService;
+import health_tracker.service.GoalService;
 import health_tracker.service.UserService;
 
 @RestController
 @RequestMapping("/api")
-public class MealController {
+public class GoalController {
 
 	@Autowired
-	MealService service;
+	GoalService service;
 	
 	@Autowired
 	UserService userService;
 	
-	@GetMapping("/meal")
-	public List<Meal> getAllMeals() {
-		return service.getAllMeals();
+	@GetMapping("/goal")
+	public List<Goal> getAllGoals() {
+		return service.getAllGoals();
 	}
 	
-	@GetMapping("/meal/{userId}")
-	public ResponseEntity<?> getAllUserMeals(@PathVariable int userId) {
-		List<Meal> found = service.getAllUserMeals(userId);
+	@GetMapping("/goal/{userId}")
+	public ResponseEntity<?> getGoalByUserId(@PathVariable int userId) throws ResourceNotFoundException {
+		Goal found = service.getGoalByUserId(userId);
 		return ResponseEntity.status(200).body(found);
 	}
 	
-	@GetMapping("meal/{userId}/{date}")
-	public ResponseEntity<?> getAllUserMealsFromDate(@PathVariable int userId, @PathVariable String date) {
-		List<Meal> found = service.getAllUserMealsFromDate(userId, date);
-		return ResponseEntity.status(200).body(found);
-	}
-	
-	@PostMapping("/meal")
-	public ResponseEntity<?> createMeal(@RequestBody Meal meal) throws ResourceNotFoundException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User found = userService.getUserByUsername(userDetails.getUsername());
-
-		Meal created = service.createMeal(meal, found);
-		return ResponseEntity.status(200).body(created);
-	}
-	
-	@PutMapping("/meal")
-	public ResponseEntity<?> updateMeal(@RequestBody Meal meal) throws ResourceNotFoundException {
+	@PostMapping("/goal")
+	public ResponseEntity<?> createGoal(@RequestBody Goal goal) throws ResourceNotFoundException, ResourceAlreadyExistsException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User found = userService.getUserByUsername(userDetails.getUsername());
 		
-		Meal updated = service.updateMeal(meal, found);
+		Goal created = service.createGoal(goal, found);
+		return ResponseEntity.status(200).body(created);
+	}
+	
+	@PutMapping("/goal")
+	public ResponseEntity<?> updateGoal(@RequestBody Goal goal) throws ResourceNotFoundException {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User found = userService.getUserByUsername(userDetails.getUsername());
+		
+		Goal updated = service.updateGoal(goal, found);
 		return ResponseEntity.status(200).body(updated);
 	}
 	
-	@DeleteMapping("meal/{id}")
-	public ResponseEntity<?> deleteMeal(@PathVariable int id) throws ResourceNotFoundException {
-		Meal deleted = service.deleteMealById(id);
+	@DeleteMapping("/goal/{id}")
+	public ResponseEntity<?> deleteGoal(@PathVariable int id) throws ResourceNotFoundException {
+		Goal deleted = service.deleteGoalById(id);
 		return ResponseEntity.status(200).body(deleted);
-	}
-	
-	@GetMapping("meal/calories/{userId}/{date}")
-	public ResponseEntity<?> getCaloriesFromDate(@PathVariable int userId, @PathVariable String date) {
-		int found = service.getCalorieDay(userId, date);
-		return ResponseEntity.status(200).body(found);
 	}
 }
