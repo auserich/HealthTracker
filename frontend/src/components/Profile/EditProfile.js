@@ -10,24 +10,11 @@ const EditProfile = (props) => {
 
 	useEffect(() => {
 		console.log("Goal Info: ", props.goalInfo);
-		if (props.goalInfo) {
-			if (props.goalInfo.id) {
-				setGoalId(props.goalInfo.id);
-				console.log("goal id: ", props.goalInfo.id);
-			}
-			if (props.goalInfo.mealGoal) {
-				setMealGoal(props.goalInfo.mealGoal);
-			}
-			if (props.goalInfo.exerciseGoal) {
-				setExerciseGoal(props.goalInfo.exerciseGoal);
-			}
-			if (props.goalInfo.waterGoal) {
-				setWaterGoal(props.goalInfo.waterGoal);
-			}
-			if (props.goalInfo.sleepGoal) {
-				setSleepGoal(props.goalInfo.sleepGoal);
-			}
-		}
+		setGoalId(props.goalInfo?.id || "");
+		setMealGoal(props.goalInfo?.mealGoal || "");
+		setExerciseGoal(props.goalInfo?.exerciseGoal || "");
+		setWaterGoal(props.goalInfo?.waterGoal || "");
+		setSleepGoal(props.goalInfo?.sleepGoal || "");
 	}, [props.goalInfo]);
 
 	const handleMealGoalChange = (e) => {
@@ -57,6 +44,13 @@ const EditProfile = (props) => {
 			sleepGoal,
 		};
 
+		console.log("props.goalInfo:", props.goalInfo);
+		editGoals(goalData);
+
+		props.handleClose();
+	};
+
+	const editGoals = (goalData) => {
 		fetch("http://localhost:8080/api/goal", {
 			method: "PUT",
 			headers: {
@@ -68,7 +62,6 @@ const EditProfile = (props) => {
 			.then((response) => response.json())
 			.then((data) => {
 				console.log("Data updated: ", data);
-				props.handleClose();
 			})
 			.catch((error) => {
 				console.error("Error: ", error);

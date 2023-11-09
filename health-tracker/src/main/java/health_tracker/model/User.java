@@ -1,9 +1,9 @@
 package health_tracker.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -61,13 +60,20 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Meal> meal;
 	
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Goal goal;
+	
+	@PostConstruct
+    public void init() {
+		System.out.println("Initializing User with Goal");
+        if (this.goal == null) {
+            this.goal = new Goal();
+            this.goal.setUser(this);
+        }
+    }
 
 	public User() { }
-	
-	
 
 	public User(Integer id, String username, List<Exercise> exercises, String password, Role role, boolean enabled,
 			String email, List<WaterLog> waterLog, List<Meal> meal, Goal goal) {
@@ -83,8 +89,6 @@ public class User implements Serializable {
 		this.meal = meal;
 		this.goal = goal;
 	}
-
-
 
 	public Integer getId() {
 		return id;

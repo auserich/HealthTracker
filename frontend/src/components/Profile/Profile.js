@@ -23,6 +23,7 @@ const Profile = () => {
 
 	const toggleEditGoal = () => {
 		setShowEditGoalData(!showEditGoalData);
+
 		fetchGoalInfo();
 	};
 
@@ -62,6 +63,12 @@ const Profile = () => {
 			});
 	};
 
+	const handleEditGoalClose = () => {
+		// Fetch updated goal info after closing the modal
+		fetchGoalInfo();
+		toggleEditGoal();
+	};
+
 	return (
 		<>
 			<Navbar></Navbar>
@@ -87,11 +94,11 @@ const Profile = () => {
 									Meal Goal:
 								</span>
 							</Col>
-							{goalInfo ? ( // Check if userInfo is not null before rendering email
-								<Col>{goalInfo.mealGoal}</Col>
-							) : (
-								<Col>Loading...</Col>
-							)}
+							<Col>
+								{goalInfo > 0
+									? goalInfo.mealGoal
+									: "No Goal Set"}
+							</Col>
 						</Row>
 					</ListGroup.Item>
 					<ListGroup.Item>
@@ -101,11 +108,11 @@ const Profile = () => {
 									Exercise Goal:
 								</span>
 							</Col>
-							{goalInfo ? ( // Check if userInfo is not null before rendering email
-								<Col>{goalInfo.exerciseGoal}</Col>
-							) : (
-								<Col>Loading...</Col>
-							)}
+							<Col>
+								{goalInfo > 0
+									? goalInfo.exerciseGoal
+									: "No Goal Set"}
+							</Col>
 						</Row>
 					</ListGroup.Item>
 					<ListGroup.Item>
@@ -115,11 +122,11 @@ const Profile = () => {
 									Water Goal:
 								</span>
 							</Col>
-							{goalInfo ? ( // Check if userInfo is not null before rendering email
-								<Col>{goalInfo.waterGoal}</Col>
-							) : (
-								<Col>Loading...</Col>
-							)}
+							<Col>
+								{goalInfo > 0
+									? goalInfo.waterGoal
+									: "No Goal Set"}
+							</Col>
 						</Row>
 					</ListGroup.Item>
 					<ListGroup.Item>
@@ -129,18 +136,17 @@ const Profile = () => {
 									Sleep Goal:
 								</span>
 							</Col>
-							{goalInfo ? ( // Check if userInfo is not null before rendering email
-								<Col>{goalInfo.sleepGoal}</Col>
-							) : (
-								<Col>Loading...</Col>
-							)}
+							<Col>
+								{goalInfo > 0
+									? goalInfo.sleepGoal
+									: "No Goal Set"}
+							</Col>
 						</Row>
 					</ListGroup.Item>
 				</ListGroup>
 				<Card.Body>
-					Weekly Goals
 					<Button className="ms-2" onClick={toggleEditGoal}>
-						Edit
+						Edit Weekly Goals
 					</Button>
 				</Card.Body>
 			</Card>
@@ -157,7 +163,7 @@ const Profile = () => {
 					{showEditGoalData && (
 						<EditProfile
 							goalInfo={goalInfo}
-							handleClose={toggleEditGoal}
+							handleClose={handleEditGoalClose}
 						/>
 					)}
 				</Modal.Body>
