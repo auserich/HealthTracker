@@ -43,6 +43,9 @@ export const Navbar = () => {
 								<NavReact.Link href="/sleep">
 									Sleep
 								</NavReact.Link>
+								<NavReact.Link href="/profile">
+									Profile
+								</NavReact.Link>
 							</NavReact>
 						</Col>
 						<Col className="d-flex justify-content-end">

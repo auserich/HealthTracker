@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import health_tracker.exception.ResourceNotFoundException;
 import health_tracker.exception.UsernameTakenException;
 import health_tracker.model.User;
+import health_tracker.repository.GoalRepository;
 import health_tracker.repository.UserRepository;
 
 @Service
@@ -17,6 +18,9 @@ public class UserService {
 	
 	@Autowired
 	UserRepository repo;
+	
+	@Autowired
+	GoalRepository goalRepo;
 	
 	@Autowired
 	PasswordEncoder encoder;
@@ -55,6 +59,10 @@ public class UserService {
 		user.setId(null);
 		user.setPassword(encoder.encode(user.getPassword()));
 		User created = repo.save(user);
+		
+		//TODO: find a better solution
+		// needed to initialize empty goal table for user
+		goalRepo.insertEmptyGoalForUser(created.getId());
 		
 		return created;
 	}

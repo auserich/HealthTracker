@@ -1,9 +1,9 @@
 package health_tracker.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -33,8 +35,9 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	String username;
 	
-	 @OneToMany(mappedBy = "user")
-	    private List<Exercise> exercises = new ArrayList<>();
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Exercise> exercises;
 	
 	@Column(nullable = false)
 	String password;
@@ -56,38 +59,92 @@ public class User implements Serializable {
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Meal> meal;
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private Goal goal;
+	
+	@PostConstruct
+    public void init() {
+		System.out.println("Initializing User with Goal");
+        if (this.goal == null) {
+            this.goal = new Goal();
+            this.goal.setUser(this);
+        }
+    }
 
 	public User() { }
 
-	public User(Integer id, String username, String password, Role role, boolean enabled, String email,
-			List<WaterLog> waterLog) {
+	public User(Integer id, String username, List<Exercise> exercises, String password, Role role, boolean enabled,
+			String email, List<WaterLog> waterLog, List<Meal> meal, Goal goal) {
 		super();
 		this.id = id;
 		this.username = username;
+		this.exercises = exercises;
 		this.password = password;
 		this.role = role;
 		this.enabled = enabled;
 		this.email = email;
 		this.waterLog = waterLog;
+		this.meal = meal;
+		this.goal = goal;
 	}
 
-	public Integer getId() { return id; } 
-	public void setId(Integer id) { this.id = id; } 
+	public Integer getId() {
+		return id;
+	}
 
-	public String getUsername() { return username; } 
-	public void setUsername(String username) { this.username = username; } 
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-	public String getPassword() { return password; } 
-	public void setPassword(String password) { this.password = password; } 
+	public String getUsername() {
+		return username;
+	}
 
-	public Role getRole() { return role; } 
-	public void setRole(Role role) { this.role = role; } 
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-	public boolean isEnabled() { return enabled; } 
-	public void setEnabled(boolean enabled) { this.enabled = enabled; } 
+	public List<Exercise> getExercises() {
+		return exercises;
+	}
 
-	public String getEmail() { return email; } 
-	public void setEmail(String email) { this.email = email; }
+	public void setExercises(List<Exercise> exercises) {
+		this.exercises = exercises;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public List<WaterLog> getWaterLog() {
 		return waterLog;
@@ -95,8 +152,24 @@ public class User implements Serializable {
 
 	public void setWaterLog(List<WaterLog> waterLog) {
 		this.waterLog = waterLog;
-	} 
-	
+	}
+
+	public List<Meal> getMeal() {
+		return meal;
+	}
+
+	public void setMeal(List<Meal> meal) {
+		this.meal = meal;
+	}
+
+	public Goal getGoal() {
+		return goal;
+	}
+
+	public void setGoal(Goal goal) {
+		this.goal = goal;
+	}
+
 	
 
 }

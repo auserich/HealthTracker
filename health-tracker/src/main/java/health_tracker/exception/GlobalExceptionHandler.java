@@ -33,4 +33,13 @@ public class GlobalExceptionHandler {
 		// constructing the response
 		return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(ResourceAlreadyExistsException.class)
+	public ResponseEntity<?> resourceAlreadyExists(ResourceAlreadyExistsException ex, WebRequest request){
+		// what data be returned back in response when exception thrown
+		ErrorDetails errorDetails = new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+				
+		// constructing the response
+		return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+	}
 }
