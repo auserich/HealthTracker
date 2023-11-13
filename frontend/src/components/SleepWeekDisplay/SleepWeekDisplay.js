@@ -200,7 +200,7 @@ const SleepWeekDisplay = () => {
 		// const mealType = data ? data.mealType : "N/A";
 		//sleep has no name or type
 		days.push(
-			<Col key={i}>
+			<Col key={i} className="day-col">
 				<Card className="day">
 					<Card.Body>
 						<Card.Title className="day-info">

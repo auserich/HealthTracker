@@ -332,7 +332,7 @@ const MealWeekDisplay = () => {
 				: "N/A";
 
 			days.push(
-				<Col key={i}>
+				<Col key={i} className="day-col">
 					<Card className="day">
 						<Card.Body>
 							<Card.Title className="day-info">

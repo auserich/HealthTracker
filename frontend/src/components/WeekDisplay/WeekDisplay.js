@@ -194,7 +194,7 @@ const WeekDisplay = () => {
 		totalOuncesByDay[i] = ounces; // Store the total ounces for the day
 
 		days.push(
-			<Col key={i}>
+			<Col key={i} className="day-col">
 				<Card className="day">
 					<Card.Body>
 						<Card.Title className="day-info">
