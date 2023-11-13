@@ -20,7 +20,7 @@ const SleepWeekDisplay = () => {
 	const [currentDate, setCurrentDate] = useState(
 		initialDate ? moment(initialDate) : moment()
 	);
-	
+
 	const [sleepLogs, setSleepLogs] = useState([]);
 	const [userId, setUserId] = useState(null);
 	const days = [];
@@ -48,7 +48,9 @@ const SleepWeekDisplay = () => {
 
 	const firstDayOfWeek = moment(currentDate);
 
-	if (currentDate.day() !== 0) {firstDayOfWeek.day(0);}
+	if (currentDate.day() !== 0) {
+		firstDayOfWeek.day(0);
+	}
 
 	const handleDateChange = (e) => {
 		const newDate = moment(e.target.value);
@@ -60,7 +62,7 @@ const SleepWeekDisplay = () => {
 	const handleEditSleepLog = (sleepLog) => {
 		setSelectedSleepData(sleepLog);
 		setEditMode(true); // Set editMode to true
-		setShowAddSleep(true); 
+		setShowAddSleep(true);
 	};
 
 	useEffect(() => {
@@ -138,7 +140,7 @@ const SleepWeekDisplay = () => {
 					const sleepLog = {
 						id: log.id,
 						minutes: log.minutes,
-						};
+					};
 					sleepLogsForWeek[dayIndex].push(sleepLog);
 				});
 
@@ -165,10 +167,7 @@ const SleepWeekDisplay = () => {
 					window.location.reload();
 				} else {
 					// Handle errors when the DELETE request fails
-					console.error(
-						"Error deletingog:",
-						response.statusText
-					);
+					console.error("Error deletingog:", response.statusText);
 				}
 			})
 			.catch((error) => {
@@ -191,12 +190,12 @@ const SleepWeekDisplay = () => {
 		//sleep exclusive hours conversion
 		let hours = 0;
 		let minutes = minutesStored;
-		if (minutesStored > 60){
-			hours = Math.floor(minutesStored/60);
-			minutes = minutesStored%60;
-		};
+		if (minutesStored > 60) {
+			hours = Math.floor(minutesStored / 60);
+			minutes = minutesStored % 60;
+		}
 
-		totalMinutesByDay[i] = minutes; // 
+		totalMinutesByDay[i] = minutes; //
 		// const mealName = data ? data.name : "No Meal";
 		// const mealType = data ? data.mealType : "N/A";
 		//sleep has no name or type
@@ -209,7 +208,9 @@ const SleepWeekDisplay = () => {
 							<br />
 							{dayOfWeek} {date}
 						</Card.Title>
-						<p>Time Slept: {hours}:{minutes}</p>
+						<p>
+							Time Slept: {hours}:{minutes}
+						</p>
 					</Card.Body>
 				</Card>
 			</Col>
@@ -245,7 +246,10 @@ const SleepWeekDisplay = () => {
 								daySleepLogs.map((sleepLog, sleepIndex) => (
 									<ListGroup.Item key={sleepIndex} as="li">
 										<Row className="align-items-center">
-											<Col>{sleepLog.minutes} Minutes Recorded</Col>
+											<Col>
+												{sleepLog.minutes} Minutes
+												Recorded
+											</Col>
 											<Col>
 												<Button
 													onClick={() =>
@@ -270,7 +274,15 @@ const SleepWeekDisplay = () => {
 									</ListGroup.Item>
 								))
 							) : (
-								<ListGroup.Item as="li">
+								<ListGroup.Item
+									as="li"
+									style={{
+										height: "55px",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+									}}
+								>
 									No Logs for this Day
 								</ListGroup.Item>
 							)}
@@ -301,7 +313,9 @@ const SleepWeekDisplay = () => {
 					</Form.Group>
 				</Form>
 				<Row className="week-container">{days}</Row>
-				<Button onClick={openAddSleepModal}>Record Sleep</Button>
+				<Button onClick={openAddSleepModal} className="custom-button">
+					Record Sleep
+				</Button>
 
 				{/* Use react-bootstrap Modal to display component as a modal */}
 				<Modal
