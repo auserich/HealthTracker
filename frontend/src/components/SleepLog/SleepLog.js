@@ -9,20 +9,21 @@ const SleepLog = (props) => {
 
 	useEffect(() => {
 		if (props.editMode && props.sleepData) {
-			if (props.sleepData.minutes) {setMinutes(props.sleepData.minutes);
+			if (props.sleepData.minutes) {
+				setMinutes(props.sleepData.minutes);
 			}
-			if (props.sleepData.date) {setDate(props.sleepData.date);
+			if (props.sleepData.date) {
+				setDate(props.sleepData.date);
 			}
-			if (props.sleepData.id){setId(props.sleepData.id)
+			if (props.sleepData.id) {
+				setId(props.sleepData.id);
 			}
 		}
-	},
-	 [props.editMode, props.sleepData]
-	 );
+	}, [props.editMode, props.sleepData]);
 
 	const handleMinutesChange = (e) => {
 		setMinutes(e.target.value);
-		};
+	};
 
 	const handleDateChange = (e) => {
 		setDate(e.target.value);
@@ -41,7 +42,7 @@ const SleepLog = (props) => {
 		const sleepData = {
 			minutes: sleepMinutes,
 			date: sleepDate,
-			id:sleepID,
+			id: sleepID,
 		};
 
 		if (props.editMode) {
@@ -90,27 +91,31 @@ const SleepLog = (props) => {
 	return (
 		<>
 			<Form onSubmit={handleSubmit}>
-						<Form.Group className="mb-3">
-							<Form.Label>Time</Form.Label>
-							<Form.Control
-								type="number"
-								placeholder="Enter type"
-								value={sleepMinutes}
-								onChange={handleMinutesChange}
-							/>
-						</Form.Group>
-						<Form.Group className="mb-3">
-							<Form.Label>Date</Form.Label>
-							<Form.Control
-								type="date"
-								placeholder="Enter date"
-								value={sleepDate}
-								onChange={handleDateChange}
-							/>
-						</Form.Group>
-						<Button variant="primary" type="submit">
-							{props.editMode ? "Save Changes" : "Submit"}
-						</Button>
+				<Form.Group className="mb-3">
+					<Form.Label>Time</Form.Label>
+					<Form.Control
+						type="number"
+						placeholder="Enter type"
+						value={sleepMinutes}
+						onChange={handleMinutesChange}
+					/>
+				</Form.Group>
+				<Form.Group className="mb-3">
+					<Form.Label>Date</Form.Label>
+					<Form.Control
+						type="date"
+						placeholder="Enter date"
+						value={sleepDate}
+						onChange={handleDateChange}
+					/>
+				</Form.Group>
+				<Button
+					variant="primary"
+					type="submit"
+					className="mx-auto d-block"
+				>
+					{props.editMode ? "Save Changes" : "Submit"}
+				</Button>
 			</Form>
 		</>
 	);

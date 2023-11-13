@@ -149,7 +149,6 @@ const ExerciseWeekDisplay = () => {
 					return log.date >= startDate && log.date <= endDate;
 				});
 
-		
 				logsWithinWeek.forEach((log) => {
 					const logDate = moment(log.date);
 					const dayIndex = logDate.day(); // Get the day index (0-6) of the log's date
@@ -157,8 +156,8 @@ const ExerciseWeekDisplay = () => {
 						id: log.id,
 						caloriesBurned: log.caloriesBurned,
 						name: log.name,
-						mintues: log.minutes, 
-                    			};
+						mintues: log.minutes,
+					};
 					exerciseLogsForWeek[dayIndex].push(exerciseLog);
 				});
 
@@ -206,7 +205,7 @@ const ExerciseWeekDisplay = () => {
 		const data = exerciseLogs[i];
 
 		// Sum up the calories for all meals on this day
-        
+
 		const caloriesBurned = data
 			? data.reduce((acc, exercise) => acc + exercise.caloriesBurned, 0)
 			: 0;
@@ -261,38 +260,53 @@ const ExerciseWeekDisplay = () => {
 					<Accordion.Body>
 						<ListGroup as="ul">
 							{dayExerciseLogs.length > 0 ? (
-								dayExerciseLogs.map((exerciseLog, exerciseIndex) => (
-									<ListGroup.Item key={exerciseIndex} as="li">
-										<Row className="align-items-center">
-											<Col>{exerciseLog.name}</Col>
-											<Col>{exerciseLog.caloriesBurned}</Col>
-											<Col>
-												<Button
-													className="me-2"
-													onClick={() =>
-														handleEditExerciseLog(
-															exerciseLog
-														)
-													}
-												>
-													Edit
-												</Button>
-												<Button
-													onClick={() =>
-														deleteExerciseLog(
-															exerciseLog.id
-														)
-													}
-													variant="danger"
-												>
-													Remove
-												</Button>
-											</Col>
-										</Row>
-									</ListGroup.Item>
-								))
+								dayExerciseLogs.map(
+									(exerciseLog, exerciseIndex) => (
+										<ListGroup.Item
+											key={exerciseIndex}
+											as="li"
+										>
+											<Row className="align-items-center">
+												<Col>{exerciseLog.name}</Col>
+												<Col>
+													{exerciseLog.caloriesBurned}
+												</Col>
+												<Col>
+													<Button
+														className="me-2"
+														onClick={() =>
+															handleEditExerciseLog(
+																exerciseLog
+															)
+														}
+													>
+														Edit
+													</Button>
+													<Button
+														onClick={() =>
+															deleteExerciseLog(
+																exerciseLog.id
+															)
+														}
+														variant="danger"
+													>
+														Remove
+													</Button>
+												</Col>
+											</Row>
+										</ListGroup.Item>
+									)
+								)
 							) : (
-								<ListGroup.Item as="li">
+								<ListGroup.Item
+									as="li"
+									style={{
+										height: "55px",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+									}}
+								>
 									No activity logged for this Day
 								</ListGroup.Item>
 							)}
@@ -319,7 +333,10 @@ const ExerciseWeekDisplay = () => {
 					</Form.Group>
 				</Form>
 				<Row className="week-container">{days}</Row>
-				<Button onClick={openAddExerciseModal} className="custom-button">
+				<Button
+					onClick={openAddExerciseModal}
+					className="custom-button"
+				>
 					Add Exercise
 				</Button>
 

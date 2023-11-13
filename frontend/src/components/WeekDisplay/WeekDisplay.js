@@ -263,7 +263,15 @@ const WeekDisplay = () => {
 									</ListGroup.Item>
 								))
 							) : (
-								<ListGroup.Item as="li">
+								<ListGroup.Item
+									as="li"
+									style={{
+										height: "55px",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+									}}
+								>
 									No water logged for this day
 								</ListGroup.Item>
 							)}

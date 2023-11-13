@@ -95,7 +95,7 @@ const Profile = () => {
 								</span>
 							</Col>
 							<Col>
-								{goalInfo > 0
+								{goalInfo && goalInfo.mealGoal > 0
 									? goalInfo.mealGoal
 									: "No Goal Set"}
 							</Col>
@@ -109,7 +109,7 @@ const Profile = () => {
 								</span>
 							</Col>
 							<Col>
-								{goalInfo > 0
+								{goalInfo && goalInfo.exerciseGoal > 0
 									? goalInfo.exerciseGoal
 									: "No Goal Set"}
 							</Col>
@@ -123,7 +123,7 @@ const Profile = () => {
 								</span>
 							</Col>
 							<Col>
-								{goalInfo > 0
+								{goalInfo && goalInfo.waterGoal > 0
 									? goalInfo.waterGoal
 									: "No Goal Set"}
 							</Col>
@@ -137,7 +137,7 @@ const Profile = () => {
 								</span>
 							</Col>
 							<Col>
-								{goalInfo > 0
+								{goalInfo && goalInfo.sleepGoal > 0
 									? goalInfo.sleepGoal
 									: "No Goal Set"}
 							</Col>
