@@ -9,6 +9,7 @@ const Meal = (props) => {
 	const [mealId, setId] = useState("");
 	const mealTypeOptions = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
 	const [mealType, setType] = useState(mealTypeOptions[0]);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	useEffect(() => {
 		if (props.editMode && props.mealData) {
@@ -50,15 +51,26 @@ const Meal = (props) => {
 		e.preventDefault();
 
 		// Check if mealName is null before proceeding
-		if (mealName === null) {
-			console.error("mealName is null. State might not be updated yet.");
+		if (!mealName) {
+			setErrorMessage("Name not entered");
 			return;
 		}
 
 		const calories = parseInt(mealCalories, 10);
 
 		if (isNaN(calories)) {
-			console.error("Invalid input for calories");
+			setErrorMessage("Calories not entered");
+			return;
+		}
+
+		if (calories < 1) {
+			setErrorMessage("Calories cannot be less than 1");
+			return;
+		}
+
+		// Check if mealDate is empty before proceeding
+		if (!mealDate) {
+			setErrorMessage("Date not entered");
 			return;
 		}
 
@@ -122,6 +134,11 @@ const Meal = (props) => {
 
 	return (
 		<>
+			{errorMessage && (
+				<div className="alert alert-danger" role="alert">
+					{errorMessage}
+				</div>
+			)}
 			<Form onSubmit={handleSubmit}>
 				<Form.Group className="mb-3">
 					<Form.Label>Name</Form.Label>
