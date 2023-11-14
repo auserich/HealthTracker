@@ -11,7 +11,7 @@ import {
 	Modal,
 } from "react-bootstrap";
 import "./SleepWeekDisplay.css";
-import moment, { min } from "moment";
+import moment from "moment";
 import SleepLog from "../SleepLog/SleepLog.js";
 import { useNavigate } from "react-router-dom";
 
@@ -123,7 +123,7 @@ const SleepWeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Meal logs from user: ", data);
+				console.log("Stored logs from user: ", data);
 
 				// Initialize an array with 7 slots, each initially as an empty array
 				const sleepLogsForWeek = Array.from({ length: 7 }, () => []);
