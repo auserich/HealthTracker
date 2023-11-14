@@ -46,7 +46,7 @@ const ExerciseWeekDisplay = () => {
 		// Close the modal
 		closeAddExerciseModal();
 
-		// Clear the selected meal data
+		// Clear the selecteddata
 		setSelectedExerciseData(null);
 		console.log("still maybe not crashed");
 
@@ -69,7 +69,7 @@ const ExerciseWeekDisplay = () => {
 		const newDate = moment(e.target.value);
 		setCurrentDate(newDate);
 
-		// Fetch the meal logs for the new date
+		// Fetch the logs for the new date
 		handleRetrieveWeekLogs(userId, newDate);
 	};
 
@@ -139,7 +139,7 @@ const ExerciseWeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(" logs from user: ", data);
+				console.log("Exercise logs from user: ", data);
 
 				// Initialize an array with 7 slots, each initially as an empty array
 				const exerciseLogsForWeek = Array.from({ length: 7 }, () => []);
@@ -154,14 +154,14 @@ const ExerciseWeekDisplay = () => {
 					const dayIndex = logDate.day(); // Get the day index (0-6) of the log's date
 					const exerciseLog = {
 						id: log.id,
-						caloriesBurned: log.caloriesBurned,
 						name: log.name,
+						caloriesBurned: log.caloriesBurned,
 						mintues: log.minutes,
 					};
 					exerciseLogsForWeek[dayIndex].push(exerciseLog);
 				});
 
-				console.log("Meal logs within the week:", exerciseLogsForWeek);
+				console.log("Exercise logs within the week:", exerciseLogsForWeek);
 
 				// Set the meal logs state with the filtered data
 				setExerciseLogs(exerciseLogsForWeek);
@@ -189,9 +189,6 @@ const ExerciseWeekDisplay = () => {
 			});
 	};
 
-	const capitalizeFirstLetter = (str) => {
-		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-	};
 
 	const totalCaloriesByDay = Array(7).fill(0);
 
@@ -212,17 +209,17 @@ const ExerciseWeekDisplay = () => {
 		totalCaloriesByDay[i] = caloriesBurned; // Store the total calories for the day
 		const exerciseName = data
 			? data.map((exercise) => exercise.name).join(", ")
-			: "No Meal";
+			: "No ex";
 		days.push(
 			<Col key={i}>
 				<Card className="day">
 					<Card.Body>
 						<Card.Title className="day-info">
-							{formattedMonthYear}
+							{formattedMonthYear},
 							<br />
 							{dayOfWeek} {date}
 						</Card.Title>
-						<p>Calories: {caloriesBurned}</p>
+						<p>Calories Burned: {caloriesBurned}</p>
 						{data && data.length !== 0 ? (
 							<p>Activity: {exerciseName}</p>
 						) : (
@@ -233,6 +230,7 @@ const ExerciseWeekDisplay = () => {
 			</Col>
 		);
 	}
+	
 
 	const renderAccordionItems = () => {
 		const daysOfWeek = [
@@ -320,7 +318,7 @@ const ExerciseWeekDisplay = () => {
 	return (
 		<>
 			<Card className="centered-container week-display">
-				<Card.Title>Logs for Week</Card.Title>
+				<Card.Title>Exercise Logs for Week</Card.Title>
 				<Form>
 					<Form.Group className="mb-3">
 						<Form.Label>Choose a Week</Form.Label>
