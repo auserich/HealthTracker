@@ -3,6 +3,10 @@ package health_tracker.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import health_tracker.exception.ResourceNotFoundException;
 import health_tracker.model.Exercise;
@@ -24,30 +29,19 @@ import health_tracker.service.UserService;
 @RestController
 @RequestMapping("/api")
 public class ExerciseController {
+
+	@Value("${exercise.api.key}")
+	private String API_KEY;
+	
     @Autowired
     ExerciseService service;
-  
-    UserService userService;
 
-    // Endpoint to get user-specific exercises
-   /* @GetMapping("/user-exercises")
-    public List<Exercise> getUserExercises(@AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        return service.getExercisesByUsername(username);
-    }*/
-    
-    @GetMapping("user-exercises/calories/{userId}/{date}")
-	public ResponseEntity<?> getCalorieFromDate(@PathVariable int userId, @PathVariable String date) {
-    int found = service.getCalorieDay(userId, date);
-    	return ResponseEntity.status(200).body(found);
-	}
-    
-    @GetMapping("user-exercises/minutes/{userId}/{date}")
-	public ResponseEntity<?> getMinuteFromDate(@PathVariable int userId, @PathVariable String date) {
-    	int found = service.getMinuteDay(userId, date);
-		return ResponseEntity.status(200).body(found);
-	}
-  
+	@Autowired
+    UserService userService;
+	
+	@Autowired
+	private RestTemplate restTemplate;
+
     @GetMapping("/exercise")
 	public List<Exercise> getAllExercises() {
 		return service.getAllExercises();
@@ -65,11 +59,24 @@ public class ExerciseController {
 		return ResponseEntity.status(200).body(found);
 	}
 	
+	@GetMapping("exercise/caloriesburned/{exercise}")
+	public ResponseEntity<?> getCaloriesburned(@PathVariable String exercise) {
+		String apiUrl = "https://api.api-ninjas.com/v1/caloriesburned?activity=" + exercise;
+		HttpHeaders headers = new HttpHeaders();
+		
+		headers.set("X-Api-Key", API_KEY);
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		
+		ResponseEntity<String> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
+		String responseBody = responseEntity.getBody();
+		
+		return ResponseEntity.status(responseEntity.getStatusCode()).body(responseBody);
+	}
+	
 	@PostMapping("/exercise")
 	public ResponseEntity<?> createExercise(@RequestBody Exercise exercise) throws ResourceNotFoundException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username = userDetails.getUsername();
-		User found = userService.getUserByUsername(username);
+		User found = userService.getUserByUsername(userDetails.getUsername());
 
 		Exercise created = service.createExercise(exercise, found);
 		return ResponseEntity.status(200).body(created);
@@ -78,8 +85,7 @@ public class ExerciseController {
 	@PutMapping("/exercise")
 	public ResponseEntity<?> updateExercise(@RequestBody Exercise exercise) throws ResourceNotFoundException {
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username = userDetails.getUsername();
-		User found = userService.getUserByUsername(username);
+		User found = userService.getUserByUsername(userDetails.getUsername());
 		
 		Exercise updated = service.updateExercise(exercise, found);
 		return ResponseEntity.status(200).body(updated);
@@ -89,5 +95,11 @@ public class ExerciseController {
 	public ResponseEntity<?> deleteExercise(@PathVariable int id) throws ResourceNotFoundException {
 		Exercise deleted = service.deleteExerciseById(id);
 		return ResponseEntity.status(200).body(deleted);
-    }
+	}
+	
+	@GetMapping("exercise/calories/{userId}/{date}")
+	public ResponseEntity<?> getCaloriesBurnedFromDate(@PathVariable int userId, @PathVariable String date) {
+		int found = service.getCaloriesBurnedDay(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
 }

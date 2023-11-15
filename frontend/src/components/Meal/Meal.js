@@ -112,6 +112,16 @@ const Meal = (props) => {
 			});
 	};
 
+	const searchMeal = (mealName) => {
+		fetch(`https://api.calorieninjas.com/v1/nutrition?query=${mealName}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer" + localStorage.getItem("jwtToken"),
+			},
+		});
+	};
+
 	const editMealLog = (mealData) => {
 		fetch(`http://localhost:8080/api/meal`, {
 			method: "PUT",
