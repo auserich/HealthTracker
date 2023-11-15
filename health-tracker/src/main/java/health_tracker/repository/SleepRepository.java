@@ -25,6 +25,6 @@ public interface SleepRepository extends JpaRepository<SleepLog, Integer> {
 	
 	List<SleepLog> getAllUserSleepLogs(@Param("date") String date, @Param("userId") int userID);
 	
-	@Query(value = "SELECT SUM(minutes) as dayMinutes FROM sleep_log WHERE id = ?1 AND date = ?2", nativeQuery = true)
+	@Query(value = "SELECT SUM(minutes) as dayMinutes FROM sleep_log WHERE user_id = ?1 AND date = ?2", nativeQuery = true)
 	public Optional<Integer> getMinuteDay(int userId, String date);
 }

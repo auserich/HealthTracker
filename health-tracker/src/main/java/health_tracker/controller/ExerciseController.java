@@ -97,9 +97,15 @@ public class ExerciseController {
 		return ResponseEntity.status(200).body(deleted);
 	}
 	
-	@GetMapping("exercise/calories/{userId}/{date}")
+	@GetMapping("/exercise/calories/{userId}/{date}")
 	public ResponseEntity<?> getCaloriesBurnedFromDate(@PathVariable int userId, @PathVariable String date) {
 		int found = service.getCaloriesBurnedDay(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
+	
+	@GetMapping("/exercise/minutes/{userId}/{date}")
+	public ResponseEntity<?> getMinuteFromDate(@PathVariable int userId, @PathVariable String date) {
+    	int found = service.getMinuteDay(userId, date);
 		return ResponseEntity.status(200).body(found);
 	}
 }

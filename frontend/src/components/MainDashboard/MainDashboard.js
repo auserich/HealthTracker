@@ -11,14 +11,9 @@ const MainDashboard = () => {
     let [currMin,setMin] = useState([]);
     let [currBurn,setBurn] = useState([]);
     let [currSleep,setSleep] = useState([]);
-    let calToday = 0;
-    let waterToday = 0;
-    let minToday = 0;
-    let burnToday = 0;
-    let sleepToday = 0;
     const navigate = useNavigate();
 
-    //TODO: get remdering of arrays to happen first no matter what, then figure out bar graph stuff
+    //TODO: figure out bar graph stuff
 
     const axiosInstance = axios.create({
         baseURL: 'http://localhost:8080',
@@ -45,7 +40,6 @@ const MainDashboard = () => {
         const getGoal = async () => {
           try {
               const response = await axiosInstance.get(`/api/goal/${localStorage.getItem("Id")}`);
-
               localStorage.setItem("Goal", JSON.stringify(response.data));
               
           } catch (error) {
@@ -55,82 +49,73 @@ const MainDashboard = () => {
       }
 
         const getCalorie = async () => {
-          currCal = [];
+          setCal([]);
           var lastDate = new Date();
           lastDate.setDate(lastDate.getDate() - 6);
           
             try {
               for(let i = 0; i < 7; i++) {
                 const response = await axiosInstance.get(`/api/meal/calories/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
-                currCal.push(response.data);
+                setCal(currCal => [...currCal,response.data]);
                 lastDate.setDate(lastDate.getDate() + 1);
               }          
             } catch (error) {
               console.error('Error:', error);
             }
 
-            calToday = currCal[6];
-
         }
 
         const getWater = async () => {
-          currWater = [];
+          setWater([]);
           var lastDate = new Date();
           lastDate.setDate(lastDate.getDate() - 6);
             try {
               for(let i = 0; i < 7; i++) {
                 const response = await axiosInstance.get(`/api/water/ounces/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
-                currWater.push(response.data);
+                setWater(currWater => [...currWater,response.data]);
                 lastDate.setDate(lastDate.getDate() + 1);
               }                 
             } catch (error) {
               console.error('Error:', error);
             }
-
-            waterToday = currWater[6];
         }
 
         const getExercise = async () => {
-          currBurn = [];
-          currMin = [];
+          setBurn([]);
+          setMin([]);
           var lastDate = new Date();
           lastDate.setDate(lastDate.getDate() - 6);
             try {
 
               for(let i = 0; i < 7; i++) {
-                const response = await axiosInstance.get(`/api/user-exercises/minutes/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
-                currMin.push(response.data);
+                const response = await axiosInstance.get(`/api/exercise/minutes/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
+                setMin(currMin => [...currMin,response.data]);
                 
-                const response2 = await axiosInstance.get(`/api/user-exercises/calories/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
-                currBurn.push(response2.data);
+                const response2 = await axiosInstance.get(`/api/exercise/calories/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
+                setBurn(currBurn => [...currBurn,response2.data]);
                 
                 lastDate.setDate(lastDate.getDate() + 1);
               }
             } catch (error) {
               console.error('Error:', error);
             }
-
-            minToday = currMin[6];
-            burnToday = currBurn[6];
 
         }
 
         const getSleep = async () => {
-          currSleep = [];
-            var lastDate = new Date();
-            lastDate.setDate(lastDate.getDate() - 8);
-            try {
-              for(let i = 0; i < 7; i++) {
-                const response = await axiosInstance.get(`/api/sleep/total/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
-                currSleep.push(response.data);
-                lastDate.setDate(lastDate.getDate() + 1);
-              }
-               
-            } catch (error) {
-              console.error('Error:', error);
+          setSleep([]);
+          var lastDate = new Date();
+          lastDate.setDate(lastDate.getDate() - 7);
+          try {
+            for(let i = 0; i < 7; i++) {
+              const response = await axiosInstance.get(`/api/sleep/total/${localStorage.getItem("Id")}/${lastDate.toJSON().slice(0,10)}`);
+              setSleep(currSleep => [...currSleep,response.data]);
+              lastDate.setDate(lastDate.getDate() + 1);
             }
-
-            sleepToday = currSleep[6];
+              
+          } catch (error) {
+            console.error('Error:', error);
+          }
 
         }
 
@@ -140,7 +125,7 @@ const MainDashboard = () => {
         getExercise();
         getSleep();
 
-      });
+      },[]);
       
 
     function navFood() {
@@ -169,8 +154,8 @@ const MainDashboard = () => {
             <div className="main-body">
                 <div className="widget" onClick={navFood}>
                     <h1>Calorie Log</h1>
-                    <p>Calories Consumed Today: {calToday} Calorie(s)</p>
-                    <p>Calories Remaining Today: {JSON.parse(localStorage.getItem("Goal")).mealGoal - calToday} Calorie(s)</p>
+                    <p>Calories Consumed Today: {currCal[6]} Calorie(s)</p>
+                    <p>Calories Remaining Today: {JSON.parse(localStorage.getItem("Goal")).mealGoal - currCal[6]} Calorie(s)</p>
 
                     <div className="graph">
                         <p>[ph] bar graph of calories consumed this week</p>
@@ -179,8 +164,8 @@ const MainDashboard = () => {
 
                 <div className="widget" onClick={navWater}>
                     <h1>Water Log</h1>
-                    <p>Water Consumed Today: {waterToday} Ounce(s)</p>
-                    <p>Water Remaining Today: {JSON.parse(localStorage.getItem("Goal")).waterGoal - waterToday} Ounce(s)</p>
+                    <p>Water Consumed Today: {currWater[6]} Ounce(s)</p>
+                    <p>Water Remaining Today: {JSON.parse(localStorage.getItem("Goal")).waterGoal - currWater[6]} Ounce(s)</p>
 
                     <div className="graph">
                         <p>[ph] bar graph of calories consumed this week</p>
@@ -189,8 +174,8 @@ const MainDashboard = () => {
 
                 <div className="widget" onClick={navExercise}>
                     <h1>Exercise Log</h1>
-                    <p>Time Spent Active Today: {minToday} Minute(s)</p>
-                    <p>Calories Burned Today: {burnToday} Calorie(s)</p>
+                    <p>Time Spent Active Today: {currMin[6]} Minute(s)</p>
+                    <p>Calories Burned Today: {currBurn[6]} Calorie(s)</p>
 
                     <div className="graph">
                         <p>[ph] bar graph of calories consumed this week</p>
@@ -199,8 +184,8 @@ const MainDashboard = () => {
 
                 <div className="widget" onClick={navSleep}>
                     <h1>Sleep Log</h1>
-                    <p>Minutes Slept Most Recently: {sleepToday} Minute(s)</p>
-                    <p>Sleep Goal: {JSON.parse(localStorage.getItem("Goal")).sleepGoal - sleepToday} Minute(s)</p>
+                    <p>Minutes Slept Most Recently: {currSleep[6]} Minute(s)</p>
+                    <p>Sleep Goal: {JSON.parse(localStorage.getItem("Goal")).sleepGoal - currSleep[6]} Minute(s)</p>
 
                     <div className="graph">
                         <p>[ph] bar graph of calories consumed this week</p>
