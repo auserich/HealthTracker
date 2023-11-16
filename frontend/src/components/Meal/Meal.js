@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Form, Button, Modal } from "react-bootstrap";
+import { Card, Form, Button, Modal, Row, Col } from "react-bootstrap";
 
 const Meal = (props) => {
 	const [mealName, setName] = useState("");
@@ -10,6 +10,7 @@ const Meal = (props) => {
 	const mealTypeOptions = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
 	const [mealType, setType] = useState(mealTypeOptions[0]);
 	const [errorMessage, setErrorMessage] = useState("");
+	const [nutritionData, setNutritionData] = useState("");
 
 	useEffect(() => {
 		if (props.editMode && props.mealData) {
@@ -93,7 +94,16 @@ const Meal = (props) => {
 		}
 	};
 
+	// Utility function to capitalize the first letter of a string
+	const capitalizeFirstLetter = (string) => {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	};
+
 	const addMealLog = (mealData) => {
+		// Capitalize the first letter of the "name" field and make rest lower case
+		mealData.name = mealData.name.toLowerCase();
+		mealData.name = capitalizeFirstLetter(mealData.name);
+
 		fetch("http://localhost:8080/api/meal", {
 			method: "POST",
 			headers: {
@@ -113,16 +123,49 @@ const Meal = (props) => {
 	};
 
 	const searchMeal = (mealName) => {
-		fetch(`https://api.calorieninjas.com/v1/nutrition?query=${mealName}`, {
-			method: "POST",
+		setErrorMessage("");
+		console.log("MEAL ATTEMPTING TO SEARCH: ", mealName);
+		console.log(localStorage.getItem("jwtToken"));
+		fetch(`http://localhost:8080/api/meal/nutrition/${mealName}`, {
+			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: "Bearer" + localStorage.getItem("jwtToken"),
+				Authorization: "Bearer " + localStorage.getItem("jwtToken"),
 			},
-		});
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("NUTRITION: ", data);
+
+				// Check if data has an "items" property and it's an array with at least one item
+				if (
+					data.items &&
+					Array.isArray(data.items) &&
+					data.items.length > 0
+				) {
+					console.log(
+						"Calories of the first meal: ",
+						data.items[0].calories
+					);
+					setCalories(data.items[0].calories);
+				} else {
+					setErrorMessage(`No meals found with name ${mealName}`);
+				}
+			})
+			.catch((error) => {
+				console.error("Error fetching nutrition data:", error);
+			});
+	};
+
+	const handleSearch = () => {
+		searchMeal(mealName);
 	};
 
 	const editMealLog = (mealData) => {
+		// Capitalize the first letter of the "name" field and make rest lower case
+		mealData.name = mealData.name.toLowerCase();
+		mealData.name = capitalizeFirstLetter(mealData.name);
+
 		fetch(`http://localhost:8080/api/meal`, {
 			method: "PUT",
 			headers: {
@@ -152,12 +195,19 @@ const Meal = (props) => {
 			<Form onSubmit={handleSubmit}>
 				<Form.Group className="mb-3">
 					<Form.Label>Name</Form.Label>
-					<Form.Control
-						type="text"
-						placeholder="Enter meal name"
-						value={mealName}
-						onChange={handleNameChange}
-					/>
+					<Row>
+						<Col xs lg="9">
+							<Form.Control
+								type="text"
+								placeholder="Enter meal name"
+								value={mealName}
+								onChange={handleNameChange}
+							/>
+						</Col>
+						<Col>
+							<Button onClick={handleSearch}>Search</Button>
+						</Col>
+					</Row>
 				</Form.Group>
 				<Form.Group className="mb-3">
 					<Form.Label>Calories</Form.Label>
