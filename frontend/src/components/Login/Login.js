@@ -15,6 +15,12 @@ const Login = () => {
 			password: password,
 		};
 
+		if(!username || !password) {
+			setSuccessMessage("");
+			setErrorMessage("Log in failed. Please check your information.");
+			return;
+		  }
+
 		try {
 			const response = await fetch("http://localhost:8080/authenticate", {
 				method: "POST",

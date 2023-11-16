@@ -95,3 +95,8 @@ body{
     width:96%;
     border: 2px solid black;
   }
+
+  #myBarChart {
+    width: 400px;
+    height: 200px;
+  }

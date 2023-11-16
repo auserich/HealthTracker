@@ -2,6 +2,7 @@ import React, {useEffect,useState} from "react";
 import { useNavigate } from "react-router-dom";
 import "./MainDashboard.css";
 import axios from 'axios';
+import Chart from 'chart.js/auto';
 
 const MainDashboard = () => {
 
@@ -11,6 +12,14 @@ const MainDashboard = () => {
     let [currMin,setMin] = useState([]);
     let [currBurn,setBurn] = useState([]);
     let [currSleep,setSleep] = useState([]);
+
+    let[days,setDays] = useState([]);
+
+    let[mealData, setMealData] = useState([]);
+    let[waterData, setWaterData] = useState([]);
+    let[minData, setMinData] = useState([]);
+    let[burnData, setBurnData] = useState([]);
+    let[sleepData, setSleepData] = useState([]);
     const navigate = useNavigate();
 
     //TODO: figure out bar graph stuff
@@ -119,11 +128,80 @@ const MainDashboard = () => {
 
         }
 
+        const renderGraphs = async() => {
+          setDays([]);
+          var lastDate = new Date();
+          lastDate.setDate(lastDate.getDate() - 6);
+
+          for (let i = 0; i < 7; i++) {
+            const stringDate = lastDate.toJSON().slice(0, 10);
+            setDays(days => [...days, stringDate]);
+            lastDate.setDate(lastDate.getDate() + 1);
+          }
+          const combinedCal = days.map((value, index) => [value,currCal[index]]);
+          const combinedWater = days.map((value, index) => [value,currWater[index]]);
+          const combinedMin = days.map((value, index) => [value,currMin[index]]);
+          const combinedBurn = days.map((value, index) => [value,currBurn[index]]);
+          const combinedSleep = days.map((value, index) => [value,currSleep[index]]);
+          
+          setMealData({
+            header: ["Day", "Calories"],
+            rows: combinedCal
+          });
+
+          setWaterData({
+            header: ["Day", "Ounces"],
+            rows: combinedWater
+          });
+
+          setMinData({
+            header: ["Day", "Minutes Active"],
+            rows: combinedMin
+          });
+
+          setBurnData({
+            header: ["Day", "Calories Burned"],
+            rows: combinedBurn
+          });
+
+          setSleepData({
+            header: ["Day", "Minutes"],
+            rows: combinedSleep
+          });
+
+        // Feel free to edit anything in this range vvv
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          const myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ["Day", "Calories"],
+              datasets: [{
+                label: 'Bar Chart Example',
+                data: currCal,
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+          
+        };
+
+        // Feel free to edit anything in this range^^^
+
         getUser().then(getGoal);
         getCalorie();
         getWater();
         getExercise();
         getSleep();
+
+        renderGraphs();
 
       },[]);
       
