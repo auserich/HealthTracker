@@ -102,4 +102,10 @@ public class ExerciseController {
 		int found = service.getCaloriesBurnedDay(userId, date);
 		return ResponseEntity.status(200).body(found);
 	}
+
+	@GetMapping("exercise/minutes/{userId}/{date}")
+	public ResponseEntity<?> getMinutesFromDate(@PathVariable int userId, @PathVariable String date) {
+		int found = service.getMinutesDay(userId, date);
+		return ResponseEntity.status(200).body(found);
+	}
 }

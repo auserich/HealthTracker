@@ -64,4 +64,14 @@ public class ExerciseService {
 			return 0;
 		}
 	}
+
+	public int getMinutesDay(int userId,String date) {
+		Optional<Integer> result = repo.getMinutesDay(userId, date);
+		
+		if(!result.isEmpty()) {
+			return result.get();
+		} else {
+			return 0;
+		}
+	}
 }
