@@ -15,79 +15,86 @@ import moment from "moment"; // Import Moment.js
 import Meal from "../Meal/Meal.js"; // Import the Meal component
 import { useNavigate } from "react-router-dom";
 
+//  Week display component to manage and display weekly meal logs
 const MealWeekDisplay = () => {
+	// State for the current date, meal logs, user ID, and other variables
 	const initialDate = localStorage.getItem("currentDate");
 	const [currentDate, setCurrentDate] = useState(
 		initialDate ? moment(initialDate) : moment()
 	);
-	//const [currentDate, setCurrentDate] = useState(moment()); // Initialize with the current date using Moment.js
 	const [mealLogs, setMealLogs] = useState([]);
-	const [userId, setUserId] = useState(null); // Initialize userId as null
-	const days = [];
-	const [editMealLogData, setEditMealLogData] = useState(null);
+	const [userId, setUserId] = useState(null);
 	const [editMode, setEditMode] = useState(false); // Add this state variable
-	const navigate = useNavigate();
 	const [selectedMealData, setSelectedMealData] = useState(null);
+	const [editMealLogData, setEditMealLogData] = useState(null);
 
+	// State for controlling the Add Meal modal
 	const [showAddMeal, setShowAddMeal] = useState(false);
+
 	// Function to open the modal
 	const openAddMealModal = () => {
 		setEditMealLogData(null);
-		setEditMode(false); // Set editMode to false when opening the Meal component for adding
+		setEditMode(false);
 		setShowAddMeal(true);
 	};
+
 	// Function to close the modal
 	const closeAddMealModal = () => {
 		setShowAddMeal(false);
 	};
+
+	// Function to handle the Add Meal form submission
 	const handleAddMealSubmit = () => {
-		// Add any necessary logic or validation here
-
-		// Close the modal
 		closeAddMealModal();
-
-		// Clear the selected meal data
 		setSelectedMealData(null);
-		console.log("still maybe not crashed");
-
-		// Instead of reloading the page, you can update the meal logs for the current week here
-		handleRetrieveWeekLogs(userId);
-		renderWeekItems();
+		renderContent();
 	};
 
-	const firstDayOfWeek = moment(currentDate);
+	// Function to render the content (update meal logs, render UI)
+	const renderContent = () => {
+		handleRetrieveWeekLogs(userId, currentDate);
+		renderWeekItems();
+		renderAccordionItems();
+	};
 
-	// Adjust the firstDayOfWeek to always start from Sunday
+	// Calculate the first and last day of the week based on the selected date
+	const firstDayOfWeek = moment(currentDate);
 	if (currentDate.day() !== 0) {
 		firstDayOfWeek.day(0);
 	}
-
 	const lastDayOfWeek = moment(firstDayOfWeek).day(6); // Get the last day (Saturday) of the selected week
 
+	// Function to handle date change inthe form
 	const handleDateChange = (e) => {
-		// setCurrentDate(moment(e.target.value)); // Update the selected date using Moment.js
-
 		const newDate = moment(e.target.value);
 		setCurrentDate(newDate);
-
-		// Fetch the meal logs for the new date
-		handleRetrieveWeekLogs(userId, newDate);
-		renderWeekItems();
+		renderContent();
 	};
 
+	// Fetch meal logs when userId or currentDate changes
+	useEffect(() => {
+		if (userId) {
+			handleRetrieveWeekLogs(userId, currentDate);
+		}
+	}, [userId, currentDate]);
+
+	// Function to handle editing a meal log
 	const handleEditMealLog = (mealLog) => {
+		console.log("meal log: ", mealLog);
 		setSelectedMealData(mealLog);
-		setEditMode(true); // Set editMode to true when opening the Meal component for editing
-		setShowAddMeal(true); // Open the Meal component in edit mode
+		setEditMode(true);
+		setShowAddMeal(true);
+		renderContent();
 	};
 
+	// Initial fetch for user ID on component mount
 	useEffect(() => {
 		fetchUserId();
-		renderWeekItems();
+		//renderContent();
 	}, []);
 
+	// Function to fetch the user ID from the server
 	const fetchUserId = () => {
-		// Make a request to your "whoami" endpoint to get the user's ID
 		fetch("http://localhost:8080/api/user/whoami", {
 			method: "GET",
 			headers: {
@@ -96,91 +103,38 @@ const MealWeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				// Assuming the user's ID is stored in a property called "id" in the response data
 				const user_id = data.id;
-
-				// Now, you have the user's ID, so you can use it to fetch meal logs
-				setUserId(user_id); // Set userId in the component's state
+				setUserId(user_id);
 			})
 			.catch((error) => {
 				console.error("Error fetching user data:", error);
 			});
 	};
 
+	// Update user ID and local storage when the selected date changes
 	useEffect(() => {
 		fetchUserId();
-		//handleRetrieveWeekLogs(userId);
 		localStorage.setItem("currentDate", currentDate.format("YYYY-MM-DD"));
 	}, [currentDate]);
 
+	// Fetch meal logs when user ID or selected date changes
 	useEffect(() => {
 		if (userId) {
 			handleRetrieveWeekLogs(userId, currentDate);
 		}
 	}, [userId, currentDate]);
 
+	// Function to fetch meal logs for the week
 	const handleRetrieveWeekLogs = (userId, newDate) => {
-		// const startDate = firstDayOfWeek.format("YYYY-MM-DD"); // Format the start date
-		// const endDate = lastDayOfWeek.format("YYYY-MM-DD"); // Format the end date
 		const startDate = moment(newDate).startOf("week").format("YYYY-MM-DD");
 		const endDate = moment(newDate).endOf("week").format("YYYY-MM-DD");
 
 		fetchMealLogsForWeek(startDate, endDate, userId);
 	};
 
-	// const fetchMealLogsForWeek = (startDate, endDate, userId) => {
-	// 	const url = `http://localhost:8080/api/meal/${userId}`;
-
-	// 	console.log("startDate: ", startDate);
-	// 	console.log("userId: ", userId);
-
-	// 	fetch(url, {
-	// 		method: "GET",
-	// 		headers: {
-	// 			Authorization: "Bearer " + localStorage.getItem("jwtToken"),
-	// 		},
-	// 	})
-	// 		.then((response) => response.json())
-	// 		.then((data) => {
-	// 			console.log("Meal logs from user: ", data);
-
-	// 			// Initialize an array with 7 slots, each initially as an empty array
-	// 			const mealLogsForWeek = Array.from({ length: 7 }, () => []);
-
-	// 			// Filter and map the logs that fall within the current week's range
-	// 			const logsWithinWeek = data.filter((log) => {
-	// 				return log.date >= startDate && log.date <= endDate;
-	// 			});
-
-	// 			// Populate the relevant slot in mealLogsForWeek with meal logs
-	// 			logsWithinWeek.forEach((log) => {
-	// 				const logDate = moment(log.date);
-	// 				const dayIndex = logDate.day(); // Get the day index (0-6) of the log's date
-	// 				const mealLog = {
-	// 					id: log.id,
-	// 					calories: log.calories,
-	// 					name: log.name,
-	// 					mealType: log.mealType, // Replace 'mealType' with the actual property name from your data
-	// 				};
-	// 				mealLogsForWeek[dayIndex].push(mealLog);
-	// 			});
-
-	// 			console.log("Meal logs within the week:", mealLogsForWeek);
-
-	// 			// Set the meal logs state with the filtered data
-	// 			setMealLogs(mealLogsForWeek);
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error("Error fetching meal logs:", error);
-	// 		});
-	// };
-
+	//  Function to fetch meal logs for the specified date range
 	const fetchMealLogsForWeek = (startDate, endDate, userId) => {
 		const url = `http://localhost:8080/api/meal/${userId}`;
-
-		console.log("startDate: ", startDate);
-		console.log("userId: ", userId);
-
 		fetch(url, {
 			method: "GET",
 			headers: {
@@ -189,32 +143,24 @@ const MealWeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Meal logs from user: ", data);
-
-				// Initialize an array with 7 slots, each initially as an empty array
 				const mealLogsForWeek = Array.from({ length: 7 }, () => []);
-
-				// Filter and map the logs that fall within the current week's range
 				const logsWithinWeek = data.filter((log) => {
 					return log.date >= startDate && log.date <= endDate;
 				});
 
-				// Populate the relevant slot in mealLogsForWeek with meal logs
 				logsWithinWeek.forEach((log) => {
 					const logDate = moment(log.date);
-					const dayIndex = logDate.day(); // Get the day index (0-6) of the log's date
+					const dayIndex = logDate.day();
 					const mealLog = {
 						id: log.id,
 						calories: log.calories,
 						name: log.name,
-						mealType: log.mealType, // Replace 'mealType' with the actual property name from your data
+						mealType: log.mealType,
+						date: log.date,
 					};
 					mealLogsForWeek[dayIndex].push(mealLog);
 				});
 
-				console.log("Meal logs within the week:", mealLogsForWeek);
-
-				// Set the meal logs state with the filtered data
 				setMealLogs(mealLogsForWeek);
 			})
 			.catch((error) => {
@@ -222,8 +168,8 @@ const MealWeekDisplay = () => {
 			});
 	};
 
+	// Function to delete a meal log
 	const deleteMealLog = (mealLogId) => {
-		// Send a DELETE request to the server-side endpoint
 		fetch(`http://localhost:8080/api/meal/${mealLogId}`, {
 			method: "DELETE",
 			headers: {
@@ -232,61 +178,35 @@ const MealWeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Meal data deleted: ", data);
 				handleAddMealSubmit(); // close the modal after successful update
 			})
 			.catch((error) => {
 				console.error("Error deleting meal log: ", error);
 			});
+
+		renderContent();
 	};
 
+	// Function to capitalize the first letter of a string
 	const capitalizeFirstLetter = (str) => {
 		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
 
+	// Array to store total calories for each day of the week
 	const totalCaloriesByDay = Array(7).fill(0);
 
-	// const renderMealType = (mealType, index) => {
-	// 	const mealTypeIndex = mealType.toLowerCase(); // Convert mealType to lowercase for consistency
-	// 	const logsForDay = mealLogs[index] || [];
-
-	// 	const isLogged = isMealTypeLogged(mealLogs, index, mealTypeIndex);
-	// 	const mealTypeStyle = isLogged ? "green" : "red";
-
-	// 	return (
-	// 		<Row>
-	// 			<span style={{ color: mealTypeStyle }}>
-	// 				{capitalizeFirstLetter(mealType)}
-	// 			</span>
-	// 		</Row>
-	// 	);
-	// };
-
+	// Function to check if a specific meal type is logged for a day
 	const isMealTypeLogged = (mealLogsForWeek, dayIndex, mealType) => {
 		const logsForDay = mealLogsForWeek[dayIndex];
-		console.log("DAILY LOG FROM INSIDE ISMEALTYPE", logsForDay);
-		const result = logsForDay
+		return logsForDay
 			? logsForDay.some((log) => log.mealType === mealType)
 			: false;
-		console.log(
-			"LOGSFORDAY, MEALTYPE, CONTAINS?",
-			logsForDay,
-			mealType,
-			result
-		);
-		return result;
 	};
 
+	// Function to render a meal type in UI
 	const renderMealType = (mealType, index) => {
 		const mealTypeIndex = mealType.toUpperCase();
-		console.log("MEAL LOGS: ", mealLogs);
 		const isLogged = isMealTypeLogged(mealLogs, index, mealTypeIndex);
-
-		console.log("INDEX VALUE: ", index);
-		console.log("RESULT FOR IF THIS IS LOGGED: ", isLogged, index);
-		console.log("RESULT FOR DAILY LOG: ", mealLogs[index]);
-		console.log("MEAL TYPE INDEX: ", mealTypeIndex);
-
 		const mealTypeStyle = isLogged ? "green" : "red";
 
 		return (
@@ -298,6 +218,7 @@ const MealWeekDisplay = () => {
 		);
 	};
 
+	// Function to render individual days of the week
 	const renderWeekItems = () => {
 		const days = [];
 
@@ -309,7 +230,7 @@ const MealWeekDisplay = () => {
 			const date = day.format("D");
 
 			const data = mealLogs[i];
-			console.log("WHAT IS I? HERE: ", i);
+			console.log("data: ", data);
 			const renderBreakfast = () => (
 				<span>{renderMealType("Breakfast", i)}</span>
 			);
@@ -353,6 +274,7 @@ const MealWeekDisplay = () => {
 		return days;
 	};
 
+	// Function to render the accordion items
 	const renderAccordionItems = () => {
 		const daysOfWeek = [
 			"Sunday",
@@ -370,7 +292,6 @@ const MealWeekDisplay = () => {
 			const dateKey = day.format("YYYY-MM-DD");
 			const data = mealLogs[index];
 			const dayMealLogs = data || []; // Ensure it's an array
-			console.log("DATA!!! ", data);
 
 			// Group meal logs by meal type
 			const groupedMealLogs = {};
@@ -382,6 +303,7 @@ const MealWeekDisplay = () => {
 				groupedMealLogs[mealType].push(mealLog);
 			});
 
+			// Render each day as an Accordion Item
 			return (
 				<Accordion.Item key={index} eventKey={index.toString()}>
 					<Accordion.Header>
@@ -463,6 +385,7 @@ const MealWeekDisplay = () => {
 		});
 	};
 
+	// Render the components for MealWeekDisplay
 	return (
 		<>
 			<Card className="centered-container week-display">

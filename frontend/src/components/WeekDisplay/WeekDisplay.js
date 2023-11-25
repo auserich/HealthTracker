@@ -14,7 +14,9 @@ import "./WeekDisplay.css";
 import moment from "moment"; // Import Moment.js
 import WaterLog from "../WaterLog/WaterLog";
 
+// Week display component to manage and display weekly water logs
 const WeekDisplay = () => {
+	// State for the current date, meal logs, user ID, and other variables
 	const [currentDate, setCurrentDate] = useState(moment()); // Initialize with the current date using Moment.js
 	const [waterLogs, setWaterLogs] = useState([]);
 	const [userId, setUserId] = useState(null); // Initialize userId as null
@@ -35,6 +37,7 @@ const WeekDisplay = () => {
 	const [showAddWater, setShowAddWater] = useState(false);
 	const [deleteMode, setDeleteMode] = useState(false);
 
+	// Function to open the Add Water modal
 	const openAddWaterModal = () => {
 		setEditWaterLogData(null);
 		setEditMode(false);
@@ -42,50 +45,58 @@ const WeekDisplay = () => {
 		setShowAddWater(true);
 	};
 
+	// Function to close the Add water modal
 	const closeAddWaterModal = () => {
 		setShowAddWater(false);
 	};
 
+	// Callback function for when adding or editing water is submitted
 	const handleAddWaterSubmit = () => {
 		closeAddWaterModal();
 		setSelectedWaterData(null);
 		handleRetrieveWeekLogs(userId);
 	};
 
+	// Handle change of date in the form
 	const handleDateChange = (e) => {
 		setCurrentDate(moment(e.target.value)); // Update the selected date using Moment.js
 	};
 
+	// Initial fetch to gett he user ID
 	useEffect(() => {
 		fetchUserId();
 	}, []);
 
+	// Fetch user ID whenever the currentDate changes
 	useEffect(() => {
 		fetchUserId();
-		// handleRetrieveWeekLogs(userId);
 		localStorage.setItem("currentDate", currentDate.format("YYYY-MM-DD"));
 	}, [currentDate]);
 
+	// Fetch water logs when userId or currentDate changes
 	useEffect(() => {
 		if (userId) {
 			handleRetrieveWeekLogs(userId, currentDate);
 		}
 	}, [userId, currentDate]);
 
+	// Function to handle editing water log
 	const handleEditWaterLog = (waterLog) => {
+		console.log("water log: ", waterLog);
 		setSelectedWaterData(waterLog);
-		setEditMode(true); // set editMode to true when opening the component
-		setShowAddWater(true); // open component in edit mode
+		setEditMode(true);
+		setShowAddWater(true);
 	};
 
+	// Function to handle deleting water log
 	const handleDeleteWaterLog = (waterLog) => {
 		setSelectedWaterData(waterLog);
-		setDeleteMode(true); // set deleteMode to true when opening the component
-		setShowAddWater(true); // open component in delete mode
+		setDeleteMode(true);
+		setShowAddWater(true);
 	};
 
+	// Function to fetch the user ID
 	const fetchUserId = () => {
-		// Make a request to your "whoami" endpoint to get the user's ID
 		fetch("http://localhost:8080/api/user/whoami", {
 			method: "GET",
 			headers: {
@@ -94,32 +105,24 @@ const WeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("user data: ", data);
-				// Assuming the user's ID is stored in a property called "id" in the response data
 				const user_id = data.id;
-
-				// Now, you have the user's ID, so you can use it to fetch water logs
 				setUserId(user_id); // Set userId in the component's state
-				console.log("state's userId: ", userId);
 			})
 			.catch((error) => {
 				console.error("Error fetching user data:", error);
 			});
 	};
 
+	// Function to retrieve water logs for the current week
 	const handleRetrieveWeekLogs = (userId) => {
-		const startDate = firstDayOfWeek.format("YYYY-MM-DD"); // Format the start date
-		const endDate = lastDayOfWeek.format("YYYY-MM-DD"); // Format the end date
-
+		const startDate = firstDayOfWeek.format("YYYY-MM-DD");
+		const endDate = lastDayOfWeek.format("YYYY-MM-DD");
 		fetchWaterLogsForWeek(startDate, endDate, userId);
 	};
 
+	// Function to fetch water logs for a specific week
 	const fetchWaterLogsForWeek = (startDate, endDate, userId) => {
 		const url = `http://localhost:8080/api/water/${userId}`;
-
-		console.log("startDate: ", startDate);
-		console.log("userId: ", userId);
-
 		fetch(url, {
 			method: "GET",
 			headers: {
@@ -128,17 +131,10 @@ const WeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Water logs for user: ", data);
-
-				// Aggregate the ounces for each date within the current week's range
 				const waterLogsForWeek = Array.from({ length: 7 }, () => []);
-
-				// Filter and map the logs that fall within the current week's range
 				const logsWithinWeek = data.filter((log) => {
 					return log.date >= startDate && log.date <= endDate;
 				});
-
-				// Populate the relevant slot in waterLogsForWeek with water logs
 				logsWithinWeek.forEach((log) => {
 					const logDate = moment(log.date);
 					const dayIndex = logDate.day();
@@ -149,10 +145,6 @@ const WeekDisplay = () => {
 					};
 					waterLogsForWeek[dayIndex].push(waterLog);
 				});
-
-				console.log("Water logs within the week: ", waterLogsForWeek);
-
-				// Set the water logs state with the filtered data
 				setWaterLogs(waterLogsForWeek);
 			})
 			.catch((error) => {
@@ -160,6 +152,7 @@ const WeekDisplay = () => {
 			});
 	};
 
+	// Function to delete a water log
 	const deleteWaterLog = (waterLogId) => {
 		fetch(`http://localhost:8080/api/water/${waterLogId}`, {
 			method: "DELETE",
@@ -169,7 +162,6 @@ const WeekDisplay = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Water data deleted: ", data);
 				handleAddWaterSubmit(); // close the modal after successful update
 			})
 			.catch((error) => {
@@ -209,6 +201,7 @@ const WeekDisplay = () => {
 		);
 	}
 
+	// Function to render items inside the Accordion component
 	const renderAccordionItems = () => {
 		const daysOfWeek = [
 			"Sunday",
@@ -225,7 +218,9 @@ const WeekDisplay = () => {
 			const formattedDate = day.format("MMMM D, YYYY");
 			const data = waterLogs[index];
 			const dayWaterLogs = data || []; // ensure it's an array
+
 			return (
+				// Render each day as an Accordion Item
 				<Accordion.Item key={index} eventKey={index.toString()}>
 					<Accordion.Header>
 						{dayOfWeek} - {formattedDate}
@@ -282,6 +277,7 @@ const WeekDisplay = () => {
 		});
 	};
 
+	// Render the components for WeekDisplay
 	return (
 		<>
 			<Card className="centered-container week-display">
