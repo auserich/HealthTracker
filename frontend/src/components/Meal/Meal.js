@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { Card, Form, Button, Modal, Row, Col } from "react-bootstrap";
+import MacronutrientChart from "./MacronutrientChart.js";
 
+// Functional component for Meal Log form
 const Meal = (props) => {
+	// State hooks to manage form data and component state
 	const [mealName, setName] = useState("");
 	const [mealCalories, setCalories] = useState("");
-
+	const [mealCarbs, setMealCarbs] = useState("");
+	const [mealFats, setMealFats] = useState("");
+	const [mealProtein, setMealProtein] = useState("");
 	const [mealDate, setDate] = useState("");
 	const [mealId, setId] = useState("");
 	const mealTypeOptions = ["BREAKFAST", "LUNCH", "DINNER", "SNACK"];
 	const [mealType, setType] = useState(mealTypeOptions[0]);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [nutritionData, setNutritionData] = useState("");
+	const [currentDate, setCurrentDate] = useState("");
 
+	// useEffect to populate form data when in edit mode
 	useEffect(() => {
 		if (props.editMode && props.mealData) {
+			if (props.mealData.id) {
+				setId(props.mealData.id);
+			}
 			if (props.mealData.name) {
 				setName(props.mealData.name);
 			}
@@ -26,12 +36,10 @@ const Meal = (props) => {
 			if (props.mealData.date) {
 				setDate(props.mealData.date);
 			}
-			if (props.mealData.id) {
-				setId(props.mealData.id);
-			}
 		}
 	}, [props.editMode, props.mealData]);
 
+	// Event handlers for form input changes
 	const handleNameChange = (e) => {
 		setName(e.target.value);
 	};
@@ -48,10 +56,11 @@ const Meal = (props) => {
 		setDate(e.target.value);
 	};
 
+	// Form submission handler
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		// Check if mealName is null before proceeding
+		// Validation checks for form inputs
 		if (!mealName) {
 			setErrorMessage("Name not entered");
 			return;
@@ -69,38 +78,44 @@ const Meal = (props) => {
 			return;
 		}
 
-		// Check if mealDate is empty before proceeding
 		if (!mealDate) {
 			setErrorMessage("Date not entered");
 			return;
 		}
 
+		// Create mealData object for API request
 		const mealData = {
 			id: mealId,
 			name: mealName,
 			calories: mealCalories,
 			mealType: mealType,
 			date: mealDate,
+			carbs: mealCarbs,
+			fats: mealFats,
+			protein: mealProtein,
 		};
 
+		// Call appropriate API method based on editMode
 		if (props.editMode) {
-			// If in "edit" mode, update the meal data
-			console.log("UPDATING: ", mealData);
 			editMealLog(mealData);
 		} else {
-			// Default to POST request
-			console.log("ADDING: ", mealData);
 			addMealLog(mealData);
 		}
 	};
 
-	// Utility function to capitalize the first letter of a string
+	// Utility function to capitalize the first letter of each word in a string
 	const capitalizeFirstLetter = (string) => {
-		return string.charAt(0).toUpperCase() + string.slice(1);
+		return string
+			.split(" ")
+			.map(
+				(word) =>
+					word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+			)
+			.join(" ");
 	};
 
+	// API call to add a new meal log
 	const addMealLog = (mealData) => {
-		// Capitalize the first letter of the "name" field and make rest lower case
 		mealData.name = mealData.name.toLowerCase();
 		mealData.name = capitalizeFirstLetter(mealData.name);
 
@@ -114,18 +129,16 @@ const Meal = (props) => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Data saved: ", data);
-				props.handleClose(); // Close the modal after successful submission
+				props.handleClose();
 			})
 			.catch((error) => {
 				console.error("Error: ", error);
 			});
 	};
 
+	// API call to searchf or nutrition data of a meal
 	const searchMeal = (mealName) => {
 		setErrorMessage("");
-		console.log("MEAL ATTEMPTING TO SEARCH: ", mealName);
-		console.log(localStorage.getItem("jwtToken"));
 		fetch(`http://localhost:8080/api/meal/nutrition/${mealName}`, {
 			method: "GET",
 			headers: {
@@ -135,19 +148,16 @@ const Meal = (props) => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("NUTRITION: ", data);
-
 				// Check if data has an "items" property and it's an array with at least one item
 				if (
 					data.items &&
 					Array.isArray(data.items) &&
 					data.items.length > 0
 				) {
-					console.log(
-						"Calories of the first meal: ",
-						data.items[0].calories
-					);
 					setCalories(data.items[0].calories);
+					setMealCarbs(data.items[0].carbohydrates_total_g);
+					setMealFats(data.items[0].fat_total_g);
+					setMealProtein(data.items[0].protein_g);
 				} else {
 					setErrorMessage(`No meals found with name ${mealName}`);
 				}
@@ -157,12 +167,13 @@ const Meal = (props) => {
 			});
 	};
 
+	// Event handler for the search button
 	const handleSearch = () => {
 		searchMeal(mealName);
 	};
 
+	// API call to edit an existing meal log
 	const editMealLog = (mealData) => {
-		// Capitalize the first letter of the "name" field and make rest lower case
 		mealData.name = mealData.name.toLowerCase();
 		mealData.name = capitalizeFirstLetter(mealData.name);
 
@@ -174,17 +185,27 @@ const Meal = (props) => {
 			},
 			body: JSON.stringify(mealData),
 		})
-			.then(console.log("have I crashed yet"))
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Meal data updated: ", data);
-				props.handleClose(); // Close the modal after successful update
+				props.handleClose();
 			})
 			.catch((error) => {
 				console.error("Error: ", error);
 			});
 	};
 
+	// Data for the MacronutrientChart component
+	const macronutrientData = {
+		labels: ["Protein", "Carbohydrates", "Fat"],
+		datasets: [
+			{
+				data: [mealProtein, mealCarbs, mealFats], // Sample values
+				backgroundColor: ["pink", "lightgreen", "lightblue"],
+			},
+		],
+	};
+
+	// Render components for the meal logging form
 	return (
 		<>
 			{errorMessage && (
@@ -192,6 +213,7 @@ const Meal = (props) => {
 					{errorMessage}
 				</div>
 			)}
+			<MacronutrientChart data={macronutrientData} />
 			<Form onSubmit={handleSubmit}>
 				<Form.Group className="mb-3">
 					<Form.Label>Name</Form.Label>
